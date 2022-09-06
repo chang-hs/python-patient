@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}患者情報{% endblock %}
+
+{% block page_content %}
+<h2>患者情報</h2>
+<table class="table table-striped">
+    {% for key in patient_dic.keys() %}
+    <tr>
+    <td>{{ key }}</td><td>{{ patient_dic[key] }}</td>
+    </tr>
+    {% endfor %}
+    {% for phone in phone_list %}
+    <tr>
+        <td>Phone</td><td>{{ phone }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<h2>手術情報</h2>
+<table class="table table-striped">
+	<tr><th>op_id</th><th>op_date</th><th>Procedure</th><th>pdf
+                file</th><th>anonymous pdf</th>
+        </tr>
+	{% for op in op_list %}
+	<tr>
+		<td>{{ op[0] }}</td>
+		<td>{{ op[1] }}</td>
+		<td>{{ op[2] }}</td>
+		<td><a href='{{ op[3] }}'>pdf</a></td>
+                <td><a href='{{ op[4] }}'>anonymous</a></td>
+	</tr>
+	{% endfor %}
+</table>
+{% endblock %}

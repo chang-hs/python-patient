@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Display Patients{% endblock %}
+
+{% block page_content %}
+<h2>Patient List</h2>
+<table class="table table-striped">
+    {% for item in patient_list %}
+    <tr>
+	    <td>{{ item[0] }}</td>
+	    <td>{{ item[1] }}</td>
+	    <td><a href = '{{ url_for("show_patient", patient_id = item[0]) }}'>選択</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

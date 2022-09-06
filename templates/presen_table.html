@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<ul>
+    {% for row in result %}
+        <li>{{ row }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

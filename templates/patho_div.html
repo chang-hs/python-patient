@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Please Register{% endblock %}
+
+{% block page_content %}
+<h2>Select Patho Div</h2>
+{{ wtf.quick_form(form) }}
+{% endblock %}
+
+

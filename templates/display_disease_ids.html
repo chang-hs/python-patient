@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Display Disease IDs{% endblock %}
+
+{% block page_content %}
+<h2>List of the Disease IDs</h2>
+<form action={{ return_url }} method="post">
+<table class="table table-striped">
+    <tr>
+        <th>Disease ID</th>
+        <th>Disease Name</th>
+        <th>major_div</th>
+        <th>patho_div</th>
+        <th>location</th>
+        <th>Checkbox</th>
+    </tr>
+    {% for dic in id_list %}
+        <tr>
+        {% for key in dic.keys() %}
+            <td>{{ dic[key] }}</td>
+            </td>
+        {% endfor %}
+        <td><input type="checkbox" name="disease_id" value="{{ dic["disease_id"] }}"/></td>
+        </tr>
+    {% endfor %}
+</table>
+<input type="submit" value="Submit" />
+</form>
+{% endblock %}

@@ -1,0 +1,11 @@
+
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Op_id入力{% endblock %}
+
+{% block page_content %}
+<h2>Op_id入力</h2>
+    {{ wtf.quick_form(form) }}
+</form>
+{% endblock %}

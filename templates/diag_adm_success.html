@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Diag Adm Success{% endblock %}
+
+{% block page_content %}
+<h1>Successfully Inserted a New Diagnosis</h1>
+<table class="table table-striped">
+    <tr>
+        <th>major_div_id</th><td>{{ major_div_id }}</td>
+    </tr>
+    <tr>
+        <th>patho_div_id</th><td>{{ patho_div_id }}</td>
+    </tr>
+    <tr>
+        <th>location_id</th><td>{{ location_id }}</td>
+    </tr>
+    <tr>
+        <th>disease_name_id</th><td>{{ disease_name_id }}</td>
+    </tr>
+    <tr>
+        <th>disease_name</th><td>{{ disease_name }}</td>
+    </tr>
+    <tr>
+        <th>location</th><td>{{ location }}</td>
+    </tr>
+</table>
+{% endblock %}

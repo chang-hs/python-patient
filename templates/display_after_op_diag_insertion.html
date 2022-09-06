@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Op diag inserted{% endblock %}
+
+{% block page_content %}
+<h2>Operation Diagnosis was successfully inserted</h2>
+<table class="table table-striped">
+    <tr>
+        <th>Op_id</th><td>{{ op_id }}</td>
+    </tr>
+    <tr>
+        <th>disease_id</th><td>{{ disease_id }}</td>
+    </tr>
+</table>
+{% endblock %}

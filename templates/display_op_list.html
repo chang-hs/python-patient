@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Display Dictionary{% endblock %}
+
+{% block page_content %}
+<h2>Operation List</h2>
+<table class="table table-striped">
+    <tr>
+        <th>Patient ID</th>
+        <th>Patient Name</th>
+        <th>Op ID</th>
+        <th>Op Date</th>
+        <th>Preop Diagnosis</th>
+        <th>Procedure</th>
+        <th>PDF op note</th>
+    </tr>
+    {% for row in op_list %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ row["patient_id"] }}</td>
+        <td>{{ row["kanji_name"] }}</td>
+        <td>{{ row["op_id"] }}</td>
+        <td>{{ row["op_date"] }}</td>
+        <td>{{ row["preop_dx"] }}</td>
+        <td>{{ row["procedure"] }}</td>
+        <td><a href="{{ row["url"] }}">pdf</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,11 @@
+
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Location Input{% endblock %}
+{% block page_content %}
+<h2>Select Location or Input A New One</h2>
+{{ wtf.quick_form(form) }}
+{% endblock %}
+
+

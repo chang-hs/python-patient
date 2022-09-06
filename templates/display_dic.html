@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Display Dictionary{% endblock %}
+
+{% block page_content %}
+<h2>Values of the Dictionary</h2>
+<table class="table table-striped">
+    {% for key in dic.keys() %}
+    <tr>
+    <td>{{ key }}</td><td>{{ dic[key] }}</td>
+    </td>
+    {% endfor %}
+</table>
+{% endblock %}

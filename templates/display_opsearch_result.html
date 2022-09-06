@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Display Patients{% endblock %}
+
+{% block page_content %}
+<h2>Patient List</h2>
+{{ sql }}
+<table class="table table-striped">
+    <th>
+            <td>op_id</td>
+            <td>op date</td>
+            <td>patient ID</td>
+            <td>patient name</td>
+            <td>procedure</td>
+            <td>pdf</td>
+    </th>
+    {% for item in result_list %}
+    <tr>
+	    <td>{{ loop.index }}</td>
+	    <td>{{ item[0] }}</td>
+	    <td>{{ item[1] }}</td>
+	    <td>{{ item[2] }}</td>
+	    <td>{{ item[3] }}</td>
+	    <td>{{ item[4] }} </td>
+            <td><a href= "{{ item[5] }}">pdf</a> </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
