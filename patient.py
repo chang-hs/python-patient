@@ -13,6 +13,7 @@ from sqlalchemy import Column, Integer, Boolean, String, Date, Time, Text, Forei
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import DeclarativeBase
 import psycopg2
 import re
 import datetime
@@ -22,15 +23,11 @@ import sys
 sys.path.append('/home/chang/flasky/')
 import funcs
 
-
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-#manager = Manager(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://chang:stmmc364936@localhost/patient'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'penfield'
-#app.config['WTF_CSRF_ENABLED'] = False
-#app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 
 db = SQLAlchemy(app)
 
