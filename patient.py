@@ -44,7 +44,7 @@ class Patient(db.Model):
     zipcode: Mapped[str] = mapped_column(String(8))
     address: Mapped[str] = mapped_column(String(100))
     phones: Mapped[List["Phone"]] = relationship(back_populates="patient")
-    ops: Mapped[List["Op"]] = relationship(back_populates="patient")
+    ops: Mapped[List["Op"]] = relationship(back_populates="patient", order_by="Op.op_date")
 
     def __repr__(self) -> str:
         return f"Patient(id={self.patient_id!r}, name={self.kanji_name!r})"
@@ -778,8 +778,7 @@ def search_patients_from_name_key():
     sql_result = Patient.query.filter(Patient.kanji_name.like('%'+name_key+'%')).all()
 
     patient_list = [(p.patient_id, p.kanji_name) for p in sql_result]
-    cur.close()
-    conn.close()
+
     return render_template("display_patient_list.html", patient_list = patient_list)
 
 @app.route('/show_patient/<patient_id>', methods=['GET', 'POST'])
@@ -789,15 +788,14 @@ def show_patient(patient_id):
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
-    sql = "SELECT patient_id, kanji_name, kana_name, sex, birthdate, \
-            zipcode, address FROM patient WHERE patient_id = %s"
-    cur.execute(sql, (patient_id,))
-    results = cur.fetchall()
-    patient_dict = dict(zip(["ID", "名前", "かな", "性別", "生年月日", "郵便番号", "住所"], results[0]))
-    sql = "SELECT phone FROM phone WHERE patient_id = %s"
-    cur.execute(sql, (patient_id,))
-    results = cur.fetchall()
-    phone_list = [item[0] for item in results]
+    
+    patient = Patient.query.filter(Patient.patient_id == patient_id).one()
+        
+    patient_dict = dict(zip(["ID", "名前", "かな", "性別", "生年月日", "郵便番号", "住所"], 
+        [patient.patient_id, patient.kanji_name, patient.kana_name, patient.sex,
+        patient.birthdate, patient.zipcode, patient.address]))
+
+    phone_list = [p.phone for p in patient.phones]
     sql = "SELECT o.op_id, o.op_date, o.procedure FROM op o \
             INNER JOIN patient p ON p.patient_id = o.patient_id \
             WHERE p.patient_id = %s ORDER BY o.op_date"
@@ -809,6 +807,9 @@ def show_patient(patient_id):
                 url_for("render_pdf_opnote_noid", op_id = item[0])
                )
                for item in results]
+    op_list = [(o.op_id, o.op_date, o.procedure,
+                url_for("render_pdf_opnote", op_id = o.op_id),
+                url_for("render_pdf_opnote_noid", op_id = o.op_id)) for o in patient.ops]
     cur.close()
     conn.close()
     return render_template("display_patient.html", patient_dic = patient_dict,
