@@ -783,11 +783,6 @@ def search_patients_from_name_key():
 
 @app.route('/show_patient/<patient_id>', methods=['GET', 'POST'])
 def show_patient(patient_id):
-    try:
-        conn = psycopg2.connect('dbname=patient host=localhost')
-        cur = conn.cursor()
-    except:
-        return render_template("message.html", message="Database Opening Error")
     
     patient = Patient.query.filter(Patient.patient_id == patient_id).one()
         
@@ -796,22 +791,12 @@ def show_patient(patient_id):
         patient.birthdate, patient.zipcode, patient.address]))
 
     phone_list = [p.phone for p in patient.phones]
-    sql = "SELECT o.op_id, o.op_date, o.procedure FROM op o \
-            INNER JOIN patient p ON p.patient_id = o.patient_id \
-            WHERE p.patient_id = %s ORDER BY o.op_date"
-    cur.execute(sql, (patient_id,))
-    results = cur.fetchall()
-    op_list = [(
-                item[0], item[1], item[2], 
-                url_for("render_pdf_opnote", op_id = item[0]),
-                url_for("render_pdf_opnote_noid", op_id = item[0])
-               )
-               for item in results]
+
+
     op_list = [(o.op_id, o.op_date, o.procedure,
                 url_for("render_pdf_opnote", op_id = o.op_id),
                 url_for("render_pdf_opnote_noid", op_id = o.op_id)) for o in patient.ops]
-    cur.close()
-    conn.close()
+
     return render_template("display_patient.html", patient_dic = patient_dict,
             phone_list = phone_list, op_list=op_list)
 
