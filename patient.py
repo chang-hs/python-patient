@@ -776,18 +776,8 @@ def search_disease_id():
 def search_patients_from_name_key():
     name_key = session['name_key']
     sql_result = Patient.query.filter(Patient.kanji_name.like('%'+name_key+'%')).all()
-    try:
-        conn = psycopg2.connect('dbname=patient host=localhost')
-        cur = conn.cursor()
-    except:
-        return render_template("message.html", message="Database Opening Error")
-    sql = "SELECT patient_id, kanji_name FROM patient WHERE kanji_name LIKE '%" + \
-            name_key + "%'"
-    cur.execute(sql)
-    results = cur.fetchall()
-    #patient_list = [(item[0], item[1]) for item in results]
-    #patient_list = [(p.patient_id, p.kanji_name) for p in sql_result]
-    patient_list = [(1, '伊藤')]
+
+    patient_list = [(p.patient_id, p.kanji_name) for p in sql_result]
     cur.close()
     conn.close()
     return render_template("display_patient_list.html", patient_list = patient_list)
