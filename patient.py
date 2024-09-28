@@ -33,6 +33,7 @@ app.config['SECRET_KEY'] = 'penfield'
 #app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 
 db = SQLAlchemy(app)
+
 class Patient(db.Model):
     __tablename__ = 'patient'
 
@@ -132,7 +133,6 @@ class OpSurgeon(db.Model):
     op_surgeon_id: Mapped[int] = mapped_column(primary_key=True)
     op_id: Mapped[int] = mapped_column(ForeignKey("op.op_id"))
     surgeon_id: Mapped[int] = mapped_column(ForeignKey("surgeons.surgeon_id"))
-
 
 with app.app_context():
     db.create_all()
@@ -791,7 +791,6 @@ def show_patient(patient_id):
         patient.birthdate, patient.zipcode, patient.address]))
 
     phone_list = [p.phone for p in patient.phones]
-
 
     op_list = [(o.op_id, o.op_date, o.procedure,
                 url_for("render_pdf_opnote", op_id = o.op_id),

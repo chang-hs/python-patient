@@ -1,13 +1,17 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
 from typing import List
 from typing import Optional
 from sqlalchemy import Column, Integer, Boolean, String, Date, Time, Text, ForeignKey, Table
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
-from patient.py import app
+import datetime
 
-db = SQLAlchemy(app)
+class Base(DeclarativeBase):
+    pass
+db = SQLAlchemy(model_class=Base)
+
 class Patient(db.Model):
     __tablename__ = 'patient'
 
@@ -19,7 +23,7 @@ class Patient(db.Model):
     zipcode: Mapped[str] = mapped_column(String(8))
     address: Mapped[str] = mapped_column(String(100))
     phones: Mapped[List["Phone"]] = relationship(back_populates="patient")
-    ops: Mapped[List["Op"]] = relationship(back_populates="patient")
+    ops: Mapped[List["Op"]] = relationship(back_populates="patient", order_by="Op.op_date")
 
     def __repr__(self) -> str:
         return f"Patient(id={self.patient_id!r}, name={self.kanji_name!r})"
@@ -107,7 +111,3 @@ class OpSurgeon(db.Model):
     op_surgeon_id: Mapped[int] = mapped_column(primary_key=True)
     op_id: Mapped[int] = mapped_column(ForeignKey("op.op_id"))
     surgeon_id: Mapped[int] = mapped_column(ForeignKey("surgeons.surgeon_id"))
-
-
-with app.app_context():
-    db.create_all()
