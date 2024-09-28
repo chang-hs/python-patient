@@ -6,13 +6,17 @@
 <h2>Operation List</h2>
 <table class="table table-striped">
     <tr>
+        <th>No.</th>
         <th>Patient ID</th>
         <th>Patient Name</th>
         <th>Op ID</th>
         <th>Op Date</th>
         <th>Preop Diagnosis</th>
         <th>Procedure</th>
-        <th>PDF op note</th>
+        <th>PDF</th>
+        <th>edited video</th>
+        <th>DICOM</th>
+        <th>Original</th>
     </tr>
     {% for row in op_list %}
     <tr>
@@ -24,6 +28,21 @@
         <td>{{ row["preop_dx"] }}</td>
         <td>{{ row["procedure"] }}</td>
         <td><a href="{{ row["url"] }}">pdf</a></td>
+        {% if row["edited"] == True %}
+            <td><input type="checkbox" checked></td>
+        {% else %}
+            <td><input type="checkbox"></td>
+        {% endif %}
+        {% if row["dicom"] == True %}
+            <td><input type="checkbox" checked></td>
+        {% else %}
+            <td><input type="checkbox"></td>
+        {% endif %}
+        {% if row["original"] == True %}
+            <td><input type="checkbox" checked></td>
+        {% else %}
+            <td><input type="checkbox"></td>
+        {% endif %}
     </tr>
     {% endfor %}
 </table>

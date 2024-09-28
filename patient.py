@@ -6,17 +6,142 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, RadioField, DateField, DateTimeField, HiddenField
 from wtforms import TextAreaField, SelectField, SelectMultipleField, IntegerField, SubmitField
 from wtforms.validators import InputRequired, Length
+from flask_sqlalchemy import SQLAlchemy
+from typing import List
+from typing import Optional
+from sqlalchemy import Column, Integer, Boolean, String, Date, Time, Text, ForeignKey, Table
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
 import psycopg2
 import re
 import datetime
 import subprocess
 
+import sys
+sys.path.append('/home/chang/flasky/')
+import funcs
+
+
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 #manager = Manager(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://chang:stmmc364936@localhost/patient'
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'penfield'
 #app.config['WTF_CSRF_ENABLED'] = False
 #app.config['PERMANENT_SESSION_LIFETIME'] = 3600
+
+db = SQLAlchemy(app)
+class Patient(db.Model):
+    __tablename__ = 'patient'
+
+    patient_id: Mapped[str] = mapped_column(String(8), primary_key=True)
+    kanji_name: Mapped[str] = mapped_column(String(30))
+    kana_name: Mapped[str] = mapped_column(String(40))
+    sex: Mapped[str] = mapped_column(String(1))
+    birthdate: Mapped[datetime.date] = mapped_column(Date)
+    zipcode: Mapped[str] = mapped_column(String(8))
+    address: Mapped[str] = mapped_column(String(100))
+    phones: Mapped[List["Phone"]] = relationship(back_populates="patient")
+    ops: Mapped[List["Op"]] = relationship(back_populates="patient")
+
+    def __repr__(self) -> str:
+        return f"Patient(id={self.patient_id!r}, name={self.kanji_name!r})"
+
+class Op(db.Model):
+    __tablename__ = 'op'
+
+    op_id: Mapped[str] = mapped_column(primary_key=True)
+    patient_id: Mapped[str] = Column(String(8), ForeignKey("patient.patient_id"))
+    op_date = Column(Date)
+    start_time: Mapped[datetime.time] = mapped_column(Time)
+    end_time: Mapped[datetime.time] = mapped_column(Time)
+    preop_dx: Mapped[str] = mapped_column(String(100))
+    postop_dx: Mapped[str] = mapped_column(String(100))
+    procedure: Mapped[str] = mapped_column(Text)
+    op_note: Mapped[str] = mapped_column(Text)
+    emergency: Mapped[bool] = Column(Boolean)
+    surgeons: Mapped[str] = mapped_column(String(40))
+    assistants: Mapped[str] = mapped_column(String(40))
+    indication: Mapped[str] = mapped_column(Text)
+    patient: Mapped["Patient"] = relationship(back_populates="ops")
+    diags = relationship("Diagnosis", secondary='op_diag')
+    surgeon_list = relationship("Surgeon", secondary='op_surgeon')
+
+    def __repr__(self) -> str:
+        return f"Op(id={self.op_id!r}, op_date={self.op_date!r}, procedure={self.procedure!r}"
+
+class Diagnosis(db.Model):
+    __tablename__ = 'diagnosis'
+
+    disease_id: Mapped[int] = mapped_column(primary_key=True)
+    disease_name: Mapped[str] = mapped_column(String(40))
+    major_div_id: Mapped[int] = mapped_column(ForeignKey("majordiv.major_div_id"))
+    patho_div_id: Mapped[int] = mapped_column(ForeignKey("pathodiv.patho_div_id"))
+    location_id: Mapped[int] = mapped_column(ForeignKey("location.location_id"))
+    disease_name_id: Mapped[int] = mapped_column(ForeignKey("disease_name.disease_name_id"))
+    location: Mapped[str] = mapped_column(String(30))
+    major_div: Mapped[str] = mapped_column(String(15))
+    ops = relationship("Op", secondary='op_diag', order_by='Op.op_date, Op.op_id')
+
+    def __repr__(self) -> str:
+        return f"Diagnosis(id={self.disease_id!r}, disease_name={self.disease_name!r})"
+
+class OpDiag(db.Model):
+    __tablename__ = 'op_diag'
+    op_diag_id: Mapped[int] = mapped_column(primary_key=True)
+    op_id: Mapped[int] = mapped_column(ForeignKey("op.op_id"))
+    disease_id: Mapped[int] = mapped_column(ForeignKey("diagnosis.disease_id"))
+
+class DiseaseName(db.Model):
+    __tablename__ = 'disease_name'
+    disease_name_id: Mapped[int] = mapped_column(primary_key=True)
+    disease_name: Mapped[str] = mapped_column(String(40))
+
+class MajorDiv(db.Model):
+    __tablename__ = 'majordiv'
+    major_div_id: Mapped[int] = mapped_column(primary_key=True)
+    major_div: Mapped[str] = mapped_column(String(15))
+
+class PathoDiv(db.Model):
+    __tablename__ = 'pathodiv'
+    patho_div_id: Mapped[int] = mapped_column(primary_key=True)
+    patho_div: Mapped[str] = mapped_column(String(15))
+
+class Location(db.Model):
+    __tablename__ = 'location'
+    location_id: Mapped[int] = mapped_column(primary_key=True)
+    location: Mapped[str] = mapped_column(String(30))
+
+class Phone(db.Model):
+    __tablename__ = 'phone'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    phone: Mapped[str] = mapped_column(String(20))
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patient.patient_id"))
+    patient = relationship("Patient", back_populates="phones")
+
+class Surgeon(db.Model):
+    __tablename__ = 'surgeons'
+    surgeon_id: Mapped[int] = mapped_column(primary_key=True)
+    surgeon_name: Mapped[str] = mapped_column(String(15))
+    active: Mapped[bool] = mapped_column(Boolean)
+
+class OpSurgeon(db.Model):
+    __tablename__ = 'op_surgeon'
+    op_surgeon_id: Mapped[int] = mapped_column(primary_key=True)
+    op_id: Mapped[int] = mapped_column(ForeignKey("op.op_id"))
+    surgeon_id: Mapped[int] = mapped_column(ForeignKey("surgeons.surgeon_id"))
+
+
+with app.app_context():
+    db.create_all()
+
+
+@app.route('/')
+def home():
+    return render_template('index.html', name="chang")
+
 
 def toWestDate(date):
     keys = (r'[sS]([0-9]+)[-\/]([0-9]+)[-\/]([0-9]+)',
@@ -147,22 +272,6 @@ class SearchKeyForm(FlaskForm):
     search_key = StringField('search_key')
     submit = SubmitField('Subit')
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    conn = psycopg2.connect("dbname=presentation host=localhost")
-    cur = conn.cursor()
-    sql = "SELECT meeting FROM presentation"
-    cur.execute(sql)
-    result = [row[0] for row in cur]
-    return render_template('presen_table.html', result=result)
-    name = None
-    form = NameForm()
-    if form.validate_on_submit():
-        name = form.name.data
-        form.name.data = ''
-    return render_template('index.html', form=form, name=name)
-    cur.close()
-    con.close()
 
 #患者登録画面用のview function
 @app.route('/register/patient', methods=['GET', 'POST'])
@@ -666,6 +775,7 @@ def search_disease_id():
 @app.route('/search/patients_from_name_key', methods = ['GET', 'POST'])
 def search_patients_from_name_key():
     name_key = session['name_key']
+    sql_result = Patient.query.filter(Patient.kanji_name.like('%'+name_key+'%')).all()
     try:
         conn = psycopg2.connect('dbname=patient host=localhost')
         cur = conn.cursor()
@@ -675,7 +785,9 @@ def search_patients_from_name_key():
             name_key + "%'"
     cur.execute(sql)
     results = cur.fetchall()
-    patient_list = [(item[0], item[1]) for item in results]
+    #patient_list = [(item[0], item[1]) for item in results]
+    #patient_list = [(p.patient_id, p.kanji_name) for p in sql_result]
+    patient_list = [(1, '伊藤')]
     cur.close()
     conn.close()
     return render_template("display_patient_list.html", patient_list = patient_list)
@@ -742,11 +854,13 @@ def render_pdf_opnote(op_id):
             op_note = op[10])
     with open("/home/chang/tmp/opnote.tex", "wt") as texfile:
         texfile.write(pdf_text)
-    res = subprocess.call('/home/chang/texlive/2022/bin/x86_64-linux/platex -output-directory /home/chang/tmp /home/chang/tmp/opnote.tex', shell=True)
-    res = subprocess.call('/home/chang/texlive/2022/bin/x86_64-linux/dvipdfmx -o /home/chang/tmp/opnote.pdf /home/chang/tmp/opnote', shell=True)
+    res = subprocess.call('/home/chang/texlive/2024/bin/x86_64-linux/platex -output-directory /home/chang/tmp /home/chang/tmp/opnote.tex', shell=True)
+    res = subprocess.call('/home/chang/texlive/2024/bin/x86_64-linux/dvipdfmx -o /home/chang/tmp/opnote.pdf /home/chang/tmp/opnote', shell=True)
     cur.close()
     conn.close()
-    return send_from_directory('/home/chang/tmp', 'opnote.pdf', as_attachment=True, attachment_filename='opnote-' + op_id + '.pdf')
+    # return send_from_directory('/home/chang/tmp', 'opnote.pdf', as_attachment=True, attachment_filename='opnote-' + op_id + '.pdf')
+    return send_from_directory('/home/chang/tmp', 'opnote.pdf', as_attachment=True)
+
 
 @app.route('/render_pdf_opnote_noid/<op_id>', methods=['GET', 'POST'])
 def render_pdf_opnote_noid(op_id):
@@ -778,8 +892,8 @@ def render_pdf_opnote_noid(op_id):
             op_note = op[10])
     with open("/home/chang/tmp/opnote.tex", "wt") as texfile:
         texfile.write(pdf_text)
-    res = subprocess.call('/home/chang/texlive/2019/bin/x86_64-linux/platex -output-directory /home/chang/tmp /home/chang/tmp/opnote.tex', shell=True)
-    res = subprocess.call('/home/chang/texlive/2019/bin/x86_64-linux/dvipdfmx -o /home/chang/tmp/opnote.pdf /home/chang/tmp/opnote', shell=True)
+    res = subprocess.call('/home/chang/texlive/2022/bin/x86_64-linux/platex -output-directory /home/chang/tmp /home/chang/tmp/opnote.tex', shell=True)
+    res = subprocess.call('/home/chang/texlive/2022/bin/x86_64-linux/dvipdfmx -o /home/chang/tmp/opnote.pdf /home/chang/tmp/opnote', shell=True)
     cur.close()
     conn.close()
     return send_from_directory('/home/chang/tmp', 'opnote.pdf', as_attachment=True, 
@@ -908,10 +1022,17 @@ def display_op_id_list():
     cur.execute(sql, (op_id_list,))
     results = cur.fetchall()
     op_rows = []
+
     for row in results:
+        op_id = row[2]
+        edited_exists = funcs.file_exists(op_id, "edited")
+        dicom_exists = funcs.file_exists(op_id, "dicom")
+        original_exists = funcs.file_exists(op_id, "original")
         op_rows.append({"patient_id": row[0], "kanji_name": row[1], 
             "op_id": row[2], "op_date": row[3], "preop_dx": row[4], 
-            "procedure": row[5], "url": url_for('render_pdf_opnote', op_id = row[2])})
+            "procedure": row[5], "url": url_for('render_pdf_opnote', op_id = row[2]),
+            "edited" : edited_exists, "dicom": dicom_exists,
+            "original": original_exists})
     return render_template("display_op_list.html", op_list = op_rows)
 
 @app.route('/presentation')
@@ -973,4 +1094,6 @@ def modify_opnote():
 
 
 if __name__ == '__main__':
-    manager.run
+    app.run(host="0.0.0.0", port=5000, debug=True)
+#if __name__ == '__main__':
+#    manager.run
