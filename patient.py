@@ -289,13 +289,19 @@ def pt_register():
         address = form.address.data
         phone_1 = form.phone_1.data
         phone_2 = form.phone_2.data
+
+        new_patient = Patient(patient_id=patient_id, kanji_name=kanji_name,
+                                kana_name=kana_name, birthdate=birthdate,
+                                sex=sex, zipcode=zipcode, address=address)
         #Insert patient data
-        sql='INSERT INTO patient \
-                (patient_id, kanji_name, kana_name, birthdate, sex, zipcode, address) \
-                values (%s, %s, %s, %s, %s, %s, %s)'
+        # sql='INSERT INTO patient \
+        #         (patient_id, kanji_name, kana_name, birthdate, sex, zipcode, address) \
+        #         values (%s, %s, %s, %s, %s, %s, %s)'
         try:
-            cur.execute(sql, (patient_id, kanji_name, kana_name, birth_date, sex, zip_code, address))
-            conn.commit()
+            # cur.execute(sql, (patient_id, kanji_name, kana_name, birth_date, sex, zip_code, address))
+            # conn.commit()
+            session.add(new_patient)
+            session.commit()
         except:
             return render_template('message.html', message="Patient Input Error")
         #Insert phone numbers
@@ -304,13 +310,16 @@ def pt_register():
             if phone_number != '':
                 sql = 'INSERT INTO phone (patient_id, phone) values \
                         (%s, %s)'
+                new_phone = Phone(patient_id=patient_id, phone=phone_number)
                 try:
-                    cur.execute(sql, (patient_id, phone_number))
-                    conn.commit()
+                    # cur.execute(sql, (patient_id, phone_number))
+                    # conn.commit()
+                    session.add(new_phone)
+                    session.commit()
                 except:
                     return render_template('message.html', message="Phone Input Error")
-        cur.close()
-        conn.close()
+        # cur.close()
+        # conn.close()
         return render_template('message.html', message="Insertion successful")
    # Getで最初に呼ばれたときは、formを出す 
     return render_template('pt_register.html', form=form)
