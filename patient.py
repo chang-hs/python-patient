@@ -777,6 +777,14 @@ def search_disease_id():
         return redirect(url_for('search_disease_id_from_search_key'))
     return render_template("disease_name_key.html", form=search_key_form)
 
+@app.route('/search_patient_id', methods = ['GET', 'POST'])
+def search_patient_id():
+    patient_id_form = PatientIdForm()
+    if patient_id_form.validate_on_submit():
+        patient_id = patient_id_form.patient_id.data
+        return redirect(url_for('show_patient', patient_id=patient_id))
+    return render_template("patient_id.html", form=patient_id_form)
+
 #Display Patient List from the input name on search_patient_name
 @app.route('/search/patients_from_name_key', methods = ['GET', 'POST'])
 def search_patients_from_name_key():
