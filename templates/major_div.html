@@ -1,11 +1,4 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-
-{% block title %}Please Register{% endblock %}
-
-{% block page_content %}
+{% extends "base.html" %} {% import "bootstrap5/form.html" as wtf %} {% block
+title %}Please Register{% endblock %} {% block page_content %}
 <h2>Select Major Div</h2>
-{{ wtf.quick_form(form) }}
-{% endblock %}
-
-
+{{ wtf.render_form(form) }} {% endblock %}

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, session, redirect, request, url_for, send_from_directory
 #from flask_script import Manager
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, RadioField, DateField, DateTimeField, HiddenField
@@ -24,7 +24,7 @@ sys.path.append('/home/chang/flasky/')
 import funcs
 
 app = Flask(__name__)
-bootstrap = Bootstrap(app)
+bootstrap = Bootstrap5(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://chang:stmmc364936@localhost/patient'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'penfield'

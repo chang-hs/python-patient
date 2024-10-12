@@ -1,31 +1,33 @@
-{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %} {%block
+{% extends "base.html" %} {% import "bootstrap5/form.html" as wtf %} {%block
 title%} Patient Database {% endblock %} {% block page_content %}
-<h1 class="m-5">Welcome to the Patient Database!</h1>
 
-<div style="margin-top: 10px; margin-bottom: 10px">
-  <a class="btn btn-primary" href="http://localhost:5000/register/patient"
-    >患者登録</a
-  >
+<div class="container-lg">
+  <h1 class="m-5">Welcome to the Patient Database!</h1>
+  <div style="margin-top: 10px; margin-bottom: 10px">
+    <a class="btn btn-primary" href="http://localhost:5000/register/patient"
+      >患者登録</a
+    >
 
-  <a class="btn btn-primary" href="http://localhost:5000/search/patient_name"
-    >患者名検索</a
-  >
-  <a class="btn btn-primary" href="http://localhost:5000/search_patient_id"
-    >患者ID検索</a
-  >
-</div>
+    <a class="btn btn-primary" href="http://localhost:5000/search/patient_name"
+      >患者名検索</a
+    >
+    <a class="btn btn-primary" href="http://localhost:5000/search_patient_id"
+      >患者ID検索</a
+    >
+  </div>
 
-<div style="margin-top: 10px; margin-bottom: 10px">
-  <a href="http://localhost:5000/register/op" class="btn btn-success"
-    >手術登録</a
-  >
-  <a href="http://localhost:5000/register/op_diag" class="btn btn-success"
-    >手術病名登録</a
-  >
-</div>
-<div style="margin-top: 10px; margin-bottom: 10px">
-  <a href="http://localhost:5000/search/disease_id" class="btn btn-info"
-    >disease_id 検索</a
-  >
+  <div style="margin-top: 10px; margin-bottom: 10px">
+    <a href="http://localhost:5000/register/op" class="btn btn-success"
+      >手術登録</a
+    >
+    <a href="http://localhost:5000/register/op_diag" class="btn btn-success"
+      >手術病名登録</a
+    >
+  </div>
+  <div style="margin-top: 10px; margin-bottom: 10px">
+    <a href="http://localhost:5000/search/disease_id" class="btn btn-info"
+      >disease_id 検索</a
+    >
+  </div>
 </div>
 {% endblock %}
