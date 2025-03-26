@@ -1,3 +1,5 @@
 venv/
+venv5/
+venv6/
 __pycache__/
 *.py[cod]
