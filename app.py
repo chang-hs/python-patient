@@ -21,6 +21,7 @@ import subprocess
 from myforms import PtRegisterForm, OpRegisterForm, IdForm, MajordivForm, PathodivForm, DiseaseNameForm
 from myforms import DiseaseNameWithNewForm, LocationForm, PatientIdForm, PatientNameForm, SearchKeyForm
 from myforms import LocationWithNewForm, OpSearchForm, OpIdForm
+from funcs import create_surgeon_string
 
 #import sys
 #sys.path.append('/home/chang/flasky/')
@@ -134,36 +135,10 @@ class OpSurgeon(db.Model):
     op_id: Mapped[int] = mapped_column(ForeignKey("op.op_id"))
     surgeon_id: Mapped[int] = mapped_column(ForeignKey("surgeons.surgeon_id"))
 
-with app.app_context():
-    db.create_all()
+#with app.app_context():
+#    db.create_all()
 
-def get_surgeon_tuples():
-    """Obtain data from the surgeons table
-    returns a list of tuples (surgeon_id_string, surgeon_name_string)"""
-    try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
-        cur = conn.cursor()
-    except:
-        return []
-    sql = "SELECT surgeon_id, surgeon_name FROM surgeons WHERE active = True"
-    cur.execute(sql)
-    return [(str(row[0]), row[1]) for row in cur]
 
-def create_surgeon_string(surgeons):
-    """From a list of surgeon_id_string, create a string of the names
-    of the surgeons"""
-    try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
-        cur = conn.cursor()
-    except:
-        return render_template("message.html", message="Database Opening Error")
-    surgeon_names = []
-    sql = "SELECT surgeon_name FROM surgeons WHERE surgeon_id = %s"
-    for i in surgeons:
-        cur.execute(sql, (i,))
-        for row in cur:
-            surgeon_names.append(row[0].strip())
-    return '、'.join(surgeon_names)
 
 @app.route('/')
 def home():
