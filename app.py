@@ -15,7 +15,6 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import DeclarativeBase
 import psycopg2
-import re
 import datetime
 import subprocess
 from myforms import PtRegisterForm, OpRegisterForm, IdForm, MajordivForm, PathodivForm, DiseaseNameForm

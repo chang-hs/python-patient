@@ -1,5 +1,6 @@
 import os, glob, psycopg2
 from flask import render_template
+import re
 
 def get_surgeon_tuples():
     """Obtain data from the surgeons table
@@ -62,5 +63,17 @@ def file_exists(op_id, type):
 		cur.close()
 		conn.close()
 		return False
+	
+def toWestDate(date):
+    keys = (r'[sS]([0-9]+)[-\/]([0-9]+)[-\/]([0-9]+)',
+            r'[hH]([0-9]+)[-\/]([0-9]+)[-\/]([0-9]+)',
+            r'[tT]([0-9]+)[-\/]([0-9]+)[-\/]([0-9]+)',
+            r'[mM]([0-9]+)[-\/]([0-9]+)[-\/]([0-9]+)')
+    years = (1925, 1988, 1911, 1867)
+    for i in (0,1,2,3):
+        m=re.match(keys[i], date)
+        if m:
+            year = int(m.groups()[0]) + years[i]
+            return str(year) + '-' + m.groups()[1] + '-' + m.groups()[2]
 
 #print(file_exists(1860, "original"))
