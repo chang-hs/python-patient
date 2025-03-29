@@ -3,16 +3,24 @@ from sqlalchemy.orm import DeclarativeBase
 from typing import List
 from typing import Optional
 from sqlalchemy import Column, Integer, Boolean, String, Date, Time, Text, ForeignKey, Table
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import scoped_session, sessionmaker
 import datetime
 
 class Base(DeclarativeBase):
     pass
-db = SQLAlchemy(model_class=Base)
 
-class Patient(db.Model):
+engine = create_engine('postgresql+psycopg2://chang:stmmc364936@localhost/patient')
+db_session = scoped_session(sessionmaker(autocommit=False,
+                                         autoflush=False,
+                                         bind=engine))
+
+Base.query = db_session.query_property()
+
+class Patient(Base):
     __tablename__ = 'patient'
 
     patient_id: Mapped[str] = mapped_column(String(8), primary_key=True)
@@ -28,7 +36,7 @@ class Patient(db.Model):
     def __repr__(self) -> str:
         return f"Patient(id={self.patient_id!r}, name={self.kanji_name!r})"
 
-class Op(db.Model):
+class Op(Base):
     __tablename__ = 'op'
 
     op_id: Mapped[str] = mapped_column(primary_key=True)
@@ -51,7 +59,7 @@ class Op(db.Model):
     def __repr__(self) -> str:
         return f"Op(id={self.op_id!r}, op_date={self.op_date!r}, procedure={self.procedure!r}"
 
-class Diagnosis(db.Model):
+class Diagnosis(Base):
     __tablename__ = 'diagnosis'
 
     disease_id: Mapped[int] = mapped_column(primary_key=True)
@@ -67,46 +75,46 @@ class Diagnosis(db.Model):
     def __repr__(self) -> str:
         return f"Diagnosis(id={self.disease_id!r}, disease_name={self.disease_name!r})"
 
-class OpDiag(db.Model):
+class OpDiag(Base):
     __tablename__ = 'op_diag'
     op_diag_id: Mapped[int] = mapped_column(primary_key=True)
     op_id: Mapped[int] = mapped_column(ForeignKey("op.op_id"))
     disease_id: Mapped[int] = mapped_column(ForeignKey("diagnosis.disease_id"))
 
-class DiseaseName(db.Model):
+class DiseaseName(Base):
     __tablename__ = 'disease_name'
     disease_name_id: Mapped[int] = mapped_column(primary_key=True)
     disease_name: Mapped[str] = mapped_column(String(40))
 
-class MajorDiv(db.Model):
+class MajorDiv(Base):
     __tablename__ = 'majordiv'
     major_div_id: Mapped[int] = mapped_column(primary_key=True)
     major_div: Mapped[str] = mapped_column(String(15))
 
-class PathoDiv(db.Model):
+class PathoDiv(Base):
     __tablename__ = 'pathodiv'
     patho_div_id: Mapped[int] = mapped_column(primary_key=True)
     patho_div: Mapped[str] = mapped_column(String(15))
 
-class Location(db.Model):
+class Location(Base):
     __tablename__ = 'location'
     location_id: Mapped[int] = mapped_column(primary_key=True)
     location: Mapped[str] = mapped_column(String(30))
 
-class Phone(db.Model):
+class Phone(Base):
     __tablename__ = 'phone'
     id: Mapped[int] = mapped_column(primary_key=True)
     phone: Mapped[str] = mapped_column(String(20))
     patient_id: Mapped[str] = mapped_column(ForeignKey("patient.patient_id"))
     patient = relationship("Patient", back_populates="phones")
 
-class Surgeon(db.Model):
+class Surgeon(Base):
     __tablename__ = 'surgeons'
     surgeon_id: Mapped[int] = mapped_column(primary_key=True)
     surgeon_name: Mapped[str] = mapped_column(String(15))
     active: Mapped[bool] = mapped_column(Boolean)
 
-class OpSurgeon(db.Model):
+class OpSurgeon(Base):
     __tablename__ = 'op_surgeon'
     op_surgeon_id: Mapped[int] = mapped_column(primary_key=True)
     op_id: Mapped[int] = mapped_column(ForeignKey("op.op_id"))
