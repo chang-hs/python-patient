@@ -54,11 +54,6 @@ def home():
 def pt_register():
     form = PtRegisterForm()
     if form.validate_on_submit():
-        try:
-            conn = psycopg2.connect("dbname=patient host=localhost")
-            cur = conn.cursor()
-        except:
-            return render_template('message.html', message="Connection error")
         patient_id = form.patient_id.data
         kanji_name = form.kanji_name.data
         kana_name = form.kana_name.data
@@ -72,13 +67,8 @@ def pt_register():
         new_patient = Patient(patient_id=patient_id, kanji_name=kanji_name,
                                 kana_name=kana_name, birthdate=birth_date,
                                 sex=sex, zipcode=zip_code, address=address)
-        #Insert patient data
-        # sql='INSERT INTO patient \
-        #         (patient_id, kanji_name, kana_name, birthdate, sex, zipcode, address) \
-        #         values (%s, %s, %s, %s, %s, %s, %s)'
+
         try:
-            # cur.execute(sql, (patient_id, kanji_name, kana_name, birth_date, sex, zip_code, address))
-            # conn.commit()
             db_session.add(new_patient)
             db_session.commit()
         except:
@@ -87,18 +77,12 @@ def pt_register():
         phones = [phone_1, phone_2]
         for phone_number in phones:
             if phone_number != '':
-                sql = 'INSERT INTO phone (patient_id, phone) values \
-                        (%s, %s)'
                 new_phone = Phone(patient_id=patient_id, phone=phone_number)
                 try:
-                    # cur.execute(sql, (patient_id, phone_number))
-                    # conn.commit()
                     db_session.add(new_phone)
                     db_session.commit()
                 except:
                     return render_template('message.html', message="Phone Input Error")
-        # cur.close()
-        # conn.close()
         return render_template('message.html', message="Insertion successful")
    # Getで最初に呼ばれたときは、formを出す 
     return render_template('pt_register.html', form=form)
