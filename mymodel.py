@@ -10,6 +10,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import scoped_session, sessionmaker
 import datetime
 import sqlalchemy as sa
+from flask_login import UserMixin
+
 
 class Base(DeclarativeBase):
     pass
@@ -60,7 +62,7 @@ class Op(Base):
     category: Mapped[str] = mapped_column(String(40), nullable=True)
     decoy: Mapped[str] = mapped_column(Text, nullable=True)
     patient: Mapped["Patient"] = relationship(back_populates="ops")
-    diags = relationship("Diagnosis", secondary='op_diag')
+    diags = relationship("Diagnosis", secondary='op_diag', overlaps='ops')
     surgeon_list = relationship("Surgeon", secondary='op_surgeon')
 
     def __repr__(self) -> str:
@@ -78,7 +80,7 @@ class Diagnosis(Base):
     location: Mapped[str] = mapped_column(String(30), nullable=True)
     major_div: Mapped[str] = mapped_column(String(15), nullable=True)
     patho_div: Mapped[str] = mapped_column(CHAR(15), nullable=True)
-    ops = relationship("Op", secondary='op_diag', order_by='Op.op_date, Op.op_id')
+    ops = relationship("Op", secondary='op_diag', order_by='Op.op_date, Op.op_id', overlaps='diags')
 
     __table_args__ = (
         sa.UniqueConstraint('major_div_id', 'patho_div_id', 'location_id', 'disease_name_id', name='diagnosis_multi_unique'),
@@ -145,3 +147,12 @@ class OpAssistant(Base):
     __table_args__ = (
         sa.UniqueConstraint('op_id', 'surgeon_id', name='op_assistant_op_id_surgeon_id_key'),
     )
+
+class User(Base, UserMixin):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String)
+    password: Mapped[str] = mapped_column(String)
+
+    def __repr__(self) -> str:
+        return f"User {self.username}"

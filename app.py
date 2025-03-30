@@ -1,4 +1,5 @@
 from flask import Flask, render_template, session, redirect, request, url_for, send_from_directory
+from flask import flash
 #from flask_script import Manager
 from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
@@ -19,11 +20,14 @@ import datetime
 import subprocess
 from myforms import PtRegisterForm, OpRegisterForm, IdForm, MajordivForm, PathodivForm, DiseaseNameForm
 from myforms import DiseaseNameWithNewForm, LocationForm, PatientIdForm, PatientNameForm, SearchKeyForm
-from myforms import LocationWithNewForm, OpSearchForm, OpIdForm
+from myforms import LocationWithNewForm, OpSearchForm, OpIdForm, LoginForm
 from funcs import create_surgeon_string
 from mymodel import Patient, Op, Diagnosis, OpDiag, DiseaseName, MajorDiv, PathoDiv, Location, Phone, Surgeon
-from mymodel import OpSurgeon
+from mymodel import OpSurgeon, User
 from mymodel import db_session
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 #import sys
 #sys.path.append('/home/chang/flasky/')
@@ -40,17 +44,48 @@ app.config['SECRET_KEY'] = 'penfield'
 def shutdown_session(exception=None):
     db_session.remove()
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+def set_user_password(username, password):
+    new_user = User(username=username, password=generate_password_hash(password))
+    db_session.add(new_user)
+    db_session.commit()
+
+def update_user_password(username, password):
+    user = User.query.filter_by(username=username).first()
+    if user:
+        user.password = generate_password_hash(password)
+    db_session.commit()
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and check_password_hash(user.password, form.password.data):
+            login_user(user)
+            return redirect(url_for('home'))
+        else:
+            flash('Invalid username or password', 'danger')
+            return redirect(url_for('login'))
+    return render_template('login.html', form=form)
+
 @app.route('/')
+@login_required
 def home():
     return render_template('index.html', name="chang")
 
 
-
-
-
-
 #患者登録画面用のview function
 @app.route('/register/patient', methods=['GET', 'POST'])
+@login_required
 def pt_register():
     form = PtRegisterForm()
     if form.validate_on_submit():
@@ -90,6 +125,7 @@ def pt_register():
 #手術登録画面用のview functioin
 #まず、patient_idを取得する
 @app.route('/register/op', methods = ['GET', 'POST'])
+@login_required
 def get_patient_id():
     patient_id_form = PatientIdForm()
     if patient_id_form.validate_on_submit():
@@ -99,6 +135,7 @@ def get_patient_id():
 
 #手術データ入力画面
 @app.route('/register/op/procedure', methods = ['GET', 'POST'])
+@login_required
 def op_register():
     patient_id = session['patient_id']
     sql = "SELECT kanji_name FROM patient WHERE patient_id = %s"
@@ -189,6 +226,7 @@ def op_register():
     return render_template("op_register.html", form=form)
 
 @app.route('/register/op_diag', methods = ['GET', 'POST'])
+@login_required
 def op_id_register():
     id_form  = IdForm()
     if id_form.validate_on_submit():
@@ -199,6 +237,7 @@ def op_id_register():
     return render_template("id_form.html", form=id_form)
 
 @app.route('/register/op_diag/majordiv', methods = ['GET', 'POST'])
+@login_required
 def major_div_register():
     major_div_form = MajordivForm()
     if major_div_form.validate_on_submit():
@@ -207,6 +246,7 @@ def major_div_register():
     return render_template("major_div.html", form=major_div_form)
 
 @app.route('/register/op_diag/pathodiv', methods = ['GET', 'POST'])
+@login_required
 def patho_div_register():
     patho_div_form = PathodivForm()
     if patho_div_form.validate_on_submit():
@@ -215,6 +255,7 @@ def patho_div_register():
     return render_template("patho_div.html", form=patho_div_form)
 
 @app.route('/register/op_diag/disease_name', methods = ['GET', 'POST'])
+@login_required
 def disease_name_register():
     sql = "SELECT DISTINCT dn.disease_name_id, dn.disease_name FROM disease_name dn \
             INNER JOIN diagnosis d ON d.disease_name_id = dn.disease_name_id \
@@ -241,6 +282,7 @@ def disease_name_register():
     return render_template("disease_name.html", form=disease_name_form)
 
 @app.route('/register/op_diag/location', methods = ['GET', 'POST'])
+@login_required
 def location_register():
     location_form = LocationForm()
     sql = "SELECT DISTINCT l.location_id, l.location FROM location l \
@@ -267,6 +309,7 @@ def location_register():
     return render_template("location.html", form=location_form)
 
 @app.route('/register/op_diag/database_insertion', methods = ['GET', 'POST'])
+@login_required
 def database_insertion():
     op_id = session['op_id']
     major_div_id = session['major_div_id']
@@ -325,6 +368,7 @@ def database_insertion():
 #    return render_template("op_id.html", form=op_id_form)
 
 @app.route('/diag_adm', methods = ['GET', 'POST'])
+@login_required
 def diag_adm_get_major():
     major_div_form = MajordivForm()
     if major_div_form.validate_on_submit():
@@ -333,6 +377,7 @@ def diag_adm_get_major():
     return render_template("major_div.html", form=major_div_form)
 
 @app.route('/diag_adm/pathodiv', methods = ['GET', 'POST'])
+@login_required
 def diag_adm_get_patho():
     patho_div_form = PathodivForm()
     if patho_div_form.validate_on_submit():
@@ -341,6 +386,7 @@ def diag_adm_get_patho():
     return render_template("patho_div.html", form=patho_div_form)
 
 @app.route('/diag_adm/diseasename', methods = ['GET', 'POST'])
+@login_required
 def diag_adm_get_disease_name():
     major_div_id = session['major_div_id']
     patho_div_id = session['patho_div_id']
@@ -410,6 +456,7 @@ def diag_adm_get_disease_name():
     return render_template("disease_name_with_new.html", form=disease_name_with_new_form)
 
 @app.route('/diag_adm/location', methods = ['GET', 'POST'])
+@login_required
 def diag_adm_get_location():
     major_div_id = session['major_div_id']
     patho_div_id = session['patho_div_id']
@@ -484,6 +531,7 @@ def diag_adm_get_location():
     return render_template("location_with_new.html", form=location_with_new_form)
 
 @app.route('/diag_adm/set_diag', methods = ['GET', 'POST'])
+@login_required
 def diag_adm_set_diag():
     major_div_id = session['major_div_id']
     patho_div_id = session['patho_div_id']
@@ -524,6 +572,7 @@ def diag_adm_set_diag():
             location=location)
 
 @app.route('/search/patient_name', methods = ['GET', 'POST'])
+@login_required
 def search_patient_name():
     patient_name_form = PatientNameForm()
     if patient_name_form.validate_on_submit():
@@ -533,6 +582,7 @@ def search_patient_name():
 
 
 @app.route('/search/disease_id', methods = ['Get', 'POST'])
+@login_required
 def search_disease_id():
     search_key_form = SearchKeyForm()
     if search_key_form.validate_on_submit():
@@ -541,6 +591,7 @@ def search_disease_id():
     return render_template("disease_name_key.html", form=search_key_form)
 
 @app.route('/search_patient_id', methods = ['GET', 'POST'])
+@login_required
 def search_patient_id():
     patient_id_form = PatientIdForm()
     if patient_id_form.validate_on_submit():
@@ -550,6 +601,7 @@ def search_patient_id():
 
 #Display Patient List from the input name on search_patient_name
 @app.route('/search/patients_from_name_key', methods = ['GET', 'POST'])
+@login_required
 def search_patients_from_name_key():
     name_key = session['name_key']
     sql_result = Patient.query.filter(Patient.kanji_name.like('%'+name_key+'%')).all()
@@ -559,6 +611,7 @@ def search_patients_from_name_key():
     return render_template("display_patient_list.html", patient_list = patient_list)
 
 @app.route('/show_patient/<patient_id>', methods=['GET', 'POST'])
+@login_required
 def show_patient(patient_id):
     
     patient = Patient.query.filter(Patient.patient_id == patient_id).one()
@@ -577,6 +630,7 @@ def show_patient(patient_id):
             phone_list = phone_list, op_list=op_list)
 
 @app.route('/render_pdf_opnote/<op_id>', methods=['Get', 'Post'])
+@login_required
 def render_pdf_opnote(op_id):
     try:
         conn = psycopg2.connect('dbname=patient host=localhost')
@@ -615,6 +669,7 @@ def render_pdf_opnote(op_id):
 
 
 @app.route('/render_pdf_opnote_noid/<op_id>', methods=['GET', 'POST'])
+@login_required
 def render_pdf_opnote_noid(op_id):
     try:
         conn = psycopg2.connect('dbname=patient host=localhost')
@@ -652,6 +707,7 @@ def render_pdf_opnote_noid(op_id):
             attachment_filename='opnote-' + op_id + '.pdf')
 
 @app.route('/search/disease_id_from_search_key', methods=['GET', 'POST'])
+@login_required
 def search_disease_id_from_search_key():
     "Search disease id from a search key of the disease name"
     search_key = '%' + session['search_key'] + '%'
@@ -679,6 +735,7 @@ def search_disease_id_from_search_key():
             return_url=url_for("receive_disease_id"))
 
 @app.route('/search/op', methods=['GET', 'POST'])
+@login_required
 def search_op():
     "Search operation from a table"
     search_key_form = OpSearchForm()
@@ -693,6 +750,7 @@ def search_op():
     return render_template("op_search.html", form=search_key_form)
 
 @app.route('/search/op_from_key', methods=['Get', 'Post'])
+@login_required
 def op_search_from_key():
     "Search op record from key"
     date_from = session['date_from']
@@ -727,6 +785,7 @@ def op_search_from_key():
     return render_template("display_opsearch_result.html", sql=sql, result_list = result_list)
 
 @app.route('/receive_disease_id', methods=['GET', 'POST'])
+@login_required
 def receive_disease_id():
     "Receive the submission from display_disease_ids.html, renders op_id_list "\
             "and redirect to op_id_list_from_disease_id_list"
@@ -736,6 +795,7 @@ def receive_disease_id():
     return redirect(url_for("get_op_id_list_from_disease_id_list"))
 
 @app.route('/search/op_id_list_from_disease_id_list', methods=['GET', 'POST'])
+@login_required
 def get_op_id_list_from_disease_id_list():
     "Obtain list of patients from a list of disease_id"
     disease_id_list = session["disease_id_list"]
@@ -757,6 +817,7 @@ def get_op_id_list_from_disease_id_list():
     return redirect(url_for("display_op_id_list"))
         
 @app.route('/display_op_id_list', methods=['GET', 'POST'])
+@login_required
 def display_op_id_list():
     op_id_list = session['op_id_list']
     try:
@@ -788,6 +849,7 @@ def display_op_id_list():
     return render_template("display_op_list.html", op_list = op_rows)
 
 @app.route('/presentation')
+@login_required
 def display_presentation():
     sql = "SELECT title, authors, meeting, date, location \
             FROM presentation ORDER BY date"
@@ -809,6 +871,7 @@ class OpNoteForm(FlaskForm):
     submit = SubmitField('Submit')
 
 @app.route('/modify_opnote', methods = ['GET', 'POST'])
+@login_required
 def get_op_id():
     op_id_form = OpIdForm()
     if op_id_form.validate_on_submit():
@@ -817,6 +880,7 @@ def get_op_id():
     return render_template('op_id.html', form=op_id_form)
 
 @app.route('/modify_opnote_process', methods = ['GET', 'POST'])
+@login_required
 def modify_opnote():
     op_id = session['op_id']
     sql = "SELECT indication, op_note FROM op WHERE op_id = %s"

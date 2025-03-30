@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "bootstrap5/form.html" as wtf %}
+
+{% block title %}Login{% endblock %}
+{% block page_content %}
+<div>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h2>Login</h2>
+    {{ wtf.render_form(form ) }}
+</div>
+{% endblock %}

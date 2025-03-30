@@ -1,7 +1,7 @@
 from flask import render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField, DateField, DateTimeField, HiddenField
-from wtforms import TextAreaField, SelectField, SelectMultipleField, IntegerField, SubmitField
+from wtforms import TextAreaField, SelectField, SelectMultipleField, IntegerField, SubmitField, PasswordField
 from wtforms.validators import InputRequired, Length
 import psycopg2
 from funcs import get_surgeon_tuples
@@ -95,3 +95,8 @@ class LocationWithNewForm(FlaskForm):
 class SearchKeyForm(FlaskForm):
     search_key = StringField('search_key')
     submit = SubmitField('Subit')
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[InputRequired(), Length(min=4, max=20)])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=6, max=20)])
+    submit = SubmitField('Login')
