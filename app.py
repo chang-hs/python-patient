@@ -806,7 +806,7 @@ def get_op_id_list_from_disease_id_list():
     "Obtain list of patients from a list of disease_id"
     disease_id_list = session["disease_id_list"]
     try:
-        conn = psycopg2.connect(database="patient_2", host="localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Can't connect to database")
