@@ -140,7 +140,7 @@ def op_register():
     patient_id = session['patient_id']
     sql = "SELECT kanji_name FROM patient WHERE patient_id = %s"
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient user=chang, password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opeening Error")
@@ -633,7 +633,7 @@ def show_patient(patient_id):
 @login_required
 def render_pdf_opnote(op_id):
     try:
-        conn = psycopg2.connect('dbname=patient host=localhost')
+        conn = psycopg2.connect('dbname=patient_2 host=localhost')
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -672,7 +672,7 @@ def render_pdf_opnote(op_id):
 @login_required
 def render_pdf_opnote_noid(op_id):
     try:
-        conn = psycopg2.connect('dbname=patient host=localhost')
+        conn = psycopg2.connect('dbname=patient_2 host=localhost')
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -774,7 +774,7 @@ def op_search_from_key():
         sql = sql + "and o.op_note ~ '.*" + opnote + ".*'"
     sql = sql + " ORDER BY o.op_date"
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
