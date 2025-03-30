@@ -140,7 +140,7 @@ def op_register():
     patient_id = session['patient_id']
     sql = "SELECT kanji_name FROM patient WHERE patient_id = %s"
     try:
-        conn = psycopg2.connect("dbname=patient user=chang, password=stmmc364936 host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opeening Error")
@@ -168,9 +168,14 @@ def op_register():
         indication = form.indication.data
         op_note = form.op_note.data
 
+        new_op = Op(patient_id=patient_id, op_date=op_date, preop_dx=preop_dx,
+                    postop_dx=postop_dx, procedure=procedure,
+                    start_time=start_time, end_time=end_time,
+                    surgeons=surgeons, assistants=assistants,
+                    indication=indication, op_note=op_note)
         #Database接続
         try:
-            conn = psycopg2.connect("dbname=patient host=localhost")
+            conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
             cur = conn.cursor()
         except:
             return render_template("message.html", message="Database Opening Error")
@@ -187,6 +192,7 @@ def op_register():
             conn.commit()
         except:
             return render_template("message.html", message="Database Insertion Error")
+ 
 
         #Retrieve op_id from the data just inserted, using op_date and start_time as queues
         sql = "SELECT op_id FROM op WHERE op_date = %s and start_time = %s"
