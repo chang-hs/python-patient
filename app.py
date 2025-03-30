@@ -269,7 +269,7 @@ def disease_name_register():
             d.patho_div_id = %s \
             ORDER BY dn.disease_name"
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Databae Opening")
@@ -297,7 +297,7 @@ def location_register():
             d.patho_div_id = %s AND \
             d.disease_name_id = %s"
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -328,7 +328,7 @@ def database_insertion():
             disease_name_id = %s AND \
             location_id = %s"
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -397,7 +397,7 @@ def diag_adm_get_disease_name():
     major_div_id = session['major_div_id']
     patho_div_id = session['patho_div_id']
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -468,7 +468,7 @@ def diag_adm_get_location():
     patho_div_id = session['patho_div_id']
     disease_name_id = session['disease_name_id']
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -544,7 +544,7 @@ def diag_adm_set_diag():
     disease_name_id = session['disease_name_id']
     location_id = session['location_id']
     try:
-        conn = psycopg2.connect('dbname=patient host=localhost')
+        conn = psycopg2.connect('dbname=patient_2 user=chang password=stmmc364936 host=localhost')
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -639,7 +639,7 @@ def show_patient(patient_id):
 @login_required
 def render_pdf_opnote(op_id):
     try:
-        conn = psycopg2.connect('dbname=patient_2 host=localhost')
+        conn = psycopg2.connect('dbname=patient_2 user=chang password=stmmc364936 host=localhost')
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -678,7 +678,7 @@ def render_pdf_opnote(op_id):
 @login_required
 def render_pdf_opnote_noid(op_id):
     try:
-        conn = psycopg2.connect('dbname=patient_2 host=localhost')
+        conn = psycopg2.connect('dbname=patient_2 user=chang password=stmmc364936 host=localhost')
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -780,7 +780,7 @@ def op_search_from_key():
         sql = sql + "and o.op_note ~ '.*" + opnote + ".*'"
     sql = sql + " ORDER BY o.op_date"
     try:
-        conn = psycopg2.connect("dbname=patient_2 host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -891,7 +891,7 @@ def modify_opnote():
     op_id = session['op_id']
     sql = "SELECT indication, op_note FROM op WHERE op_id = %s"
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
