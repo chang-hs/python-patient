@@ -1,3 +1,37 @@
 {% extends "base.html" %} {% import "bootstrap5/form.html" as wtf %} {% block
-title %}Please Register{% endblock %} {% block page_content %} {{
-wtf.render_form(form) }} {% endblock %}
+title %}Please Register{% endblock %} {% block page_content %}
+<nav class="navbar navbar-expand-lg bg-body-tertiary mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="#">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Register
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="{{ url_for('pt_register') }}">患者</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('get_patient_id') }}">手術</a></li>
+                        </ul>
+                    </a>
+                    <a class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Search
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="{{ url_for('search_patient_name') }}">患者名</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('search_patient_id') }}">患者ID</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('search_disease_id') }}">病名</a></li>
+                        </ul>
+                    </a>
+            </div>
+        </div>
+    </nav>
+ {{ wtf.render_form(form) }} 
+ {% endblock %}
