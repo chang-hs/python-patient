@@ -20,7 +20,7 @@ import datetime
 import subprocess
 from myforms import PtRegisterForm, OpRegisterForm, IdForm, MajordivForm, PathodivForm, DiseaseNameForm
 from myforms import DiseaseNameWithNewForm, LocationForm, PatientIdForm, PatientNameForm, SearchKeyForm
-from myforms import LocationWithNewForm, OpSearchForm, OpIdForm, LoginForm
+from myforms import LocationWithNewForm, OpSearchForm, OpIdForm, OpDisplayForm, LoginForm
 from funcs import create_surgeon_string
 from mymodel import Patient, Op, Diagnosis, OpDiag, DiseaseName, MajorDiv, PathoDiv, Location, Phone, Surgeon
 from mymodel import OpSurgeon, User
@@ -853,6 +853,32 @@ def display_op_id_list():
             "edited" : edited_exists, "dicom": dicom_exists,
             "original": original_exists})
     return render_template("display_op_list.html", op_list = op_rows)
+
+@app.route('/display_op/<int:op_id>')
+@login_required
+def display_op(op_id):
+    op = Op.query.filter_by(op_id = op_id).first()
+    patient = op.patient
+    mydict = {
+        "op_id": op.op_id,
+        "patient_id": patient.patient_id,
+        "kanji_name": patient.kanji_name,
+        "op_date": op.op_date,
+        "preop_dx": op.preop_dx,
+        "postop_dx": op.postop_dx,
+        "procedure": op.procedure,
+        "start_time": op.start_time,
+        "end_time": op.end_time,
+        "surgeons": op.surgeons,
+        "assistants": op.assistants,
+        "indication": op.indication,
+        "op_note": op.op_note
+    }
+    form = OpDisplayForm(op_id=op.op_id, patient_id=patient.patient_id, op_date=op.op_date,
+                         preop_dx=op.preop_dx, postop_dx=op.postop_dx, procedure=op.procedure,
+                         start_time=op.start_time, surgeons=op.surgeons, assistants=op.assistants,
+                         indication=op.indication, op_note=op.op_note)
+    return render_template("op_display.html", mydict=mydict)
 
 @app.route('/presentation')
 @login_required

@@ -1,8 +1,8 @@
-
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap5/form.html" as wtf %}
 
-{% block title %}Disease Name Input{% endblock %}
+{% block title %}Op Note{% endblock %}
+
 {% block page_content %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3">
         <div class="container-fluid">
@@ -37,8 +37,35 @@
             </div>
         </div>
     </nav>
-<h2>Select Disease Name or Input A New One</h2>
-{{ wtf.quick_form(form) }}
+<h2>Operation Record</h2>
+<dl class="row">
+    <dt class="col-sm-3">Op ID</dt>
+    <dd class="col-sm-9">{{ mydict["op_id"]}}</dd>
+
+    <dt class="col-sm-3">Patient ID</dt>
+    <dd class="col-sm-9">{{ mydict["patient_id"] }}</dd>
+
+    <dt class="col-sm-3">Patient Name</dt>
+    <dd class="col-sm-9">{{ mydict["kanji_name"] }}</dd>
+
+    <dt class="col-sm-3">Preop Dx</dt>
+    <dd class="col-sm-9">{{ mydict["preop_dx"] }}</dd>
+
+    <dt class="col-sm-3">Op Date</dt>
+    <dd class="col-sm-9">{{ mydict["op_date"] }}</dd>
+
+    <dt class="col-sm-3">Procedure</dt>
+    <dd class="col-sm-9">{{ mydict["procedure"] }}</dd>
+
+    <dt class="col-sm-3">Start Time</dt>
+    <dd class="col-sm-9">{{ mydict["start_time"] }}</dd>
+
+    <dt class="col-sm-3">End Time</dt>
+    <dd class="col-sm-9">{{ mydict["end_time"] }}</dd>
+</dl>
+<h5>Indication</h5>
+<p>{{ mydict["indication"] }}</p>
+<h5>Procedure</h5>
+<p>{{ mydict["op_note"] }}</p>
+
 {% endblock %}
-
-
