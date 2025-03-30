@@ -36,6 +36,9 @@ title%} Patient Database {% endblock %} {% block page_content %}
         </div>
     </nav>
   <h1 class="m-5">Welcome to the Patient Database!</h1>
+  <div>
+    <img class="img-fluid" src="{{ url_for('static', filename='beautiful_landscape.png') }}", alt="Landscape">
+  </div>
   <div class="row">
     <div class="col">
       <a class="btn btn-primary" href="http://localhost:5000/register/patient"
