@@ -712,7 +712,7 @@ def search_disease_id_from_search_key():
     "Search disease id from a search key of the disease name"
     search_key = '%' + session['search_key'] + '%'
     try:
-        conn = psycopg2.connect(database="patient", host="localhost")
+        conn = psycopg2.connect(database="patient_2", host="localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Can't connect to database")
@@ -800,7 +800,7 @@ def get_op_id_list_from_disease_id_list():
     "Obtain list of patients from a list of disease_id"
     disease_id_list = session["disease_id_list"]
     try:
-        conn = psycopg2.connect(database="patient", host="localhost")
+        conn = psycopg2.connect(database="patient_2", host="localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Can't connect to database")
@@ -821,7 +821,7 @@ def get_op_id_list_from_disease_id_list():
 def display_op_id_list():
     op_id_list = session['op_id_list']
     try:
-        conn = psycopg2.connect(database="patient", host="localhost")
+        conn = psycopg2.connect(database="patient_2", host="localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Can't connect to database")
