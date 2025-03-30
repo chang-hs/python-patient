@@ -718,7 +718,7 @@ def search_disease_id_from_search_key():
     "Search disease id from a search key of the disease name"
     search_key = '%' + session['search_key'] + '%'
     try:
-        conn = psycopg2.connect(database="patient_2", host="localhost")
+        conn = psycopg2.connect(database="dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Can't connect to database")
