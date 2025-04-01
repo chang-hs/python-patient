@@ -6,7 +6,7 @@ def get_surgeon_tuples():
     """Obtain data from the surgeons table
     returns a list of tuples (surgeon_id_string, surgeon_name_string)"""
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return []
@@ -18,7 +18,7 @@ def create_surgeon_string(surgeons):
     """From a list of surgeon_id_string, create a string of the names
     of the surgeons"""
     try:
-        conn = psycopg2.connect("dbname=patient host=localhost")
+        conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
@@ -33,7 +33,7 @@ def create_surgeon_string(surgeons):
 def file_exists(op_id, type):
 	myPatientsPath = "/home/chang/Dropbox/myPatients/"
 	try:
-		conn = psycopg2.connect("dbname=patient host=localhost")
+		conn = psycopg2.connect("dbname=patient_2 user=chang password=stmmc364936 host=localhost")
 		cur = conn.cursor()
 	except:
 		return render_template("message.html", message="Database Opening Error")
