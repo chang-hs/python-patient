@@ -75,5 +75,14 @@ def toWestDate(date):
         if m:
             year = int(m.groups()[0]) + years[i]
             return str(year) + '-' + m.groups()[1] + '-' + m.groups()[2]
+        
+def convert_paragraph_text(text):
+    pattern = r"\\paragraph\{(.*?)\}(.*?)((?=\\paragraph)|$)"
+    paragraphs = re.findall(pattern, text, re.DOTALL)
+    formatted = ""
+    for i, (head, body, _) in enumerate(paragraphs):
+          body = body.strip()
+          formatted += f'<p class="mb-1"><span class="mx-2"><strong>{head}</strong></span>{body}</p>'
+    return formatted
 
 #print(file_exists(1860, "original"))

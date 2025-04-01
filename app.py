@@ -21,7 +21,7 @@ import subprocess
 from myforms import PtRegisterForm, OpRegisterForm, IdForm, MajordivForm, PathodivForm, DiseaseNameForm
 from myforms import DiseaseNameWithNewForm, LocationForm, PatientIdForm, PatientNameForm, SearchKeyForm
 from myforms import LocationWithNewForm, OpSearchForm, OpIdForm, OpDisplayForm, LoginForm
-from funcs import create_surgeon_string
+from funcs import create_surgeon_string, convert_paragraph_text
 from mymodel import Patient, Op, Diagnosis, OpDiag, DiseaseName, MajorDiv, PathoDiv, Location, Phone, Surgeon
 from mymodel import OpSurgeon, User
 from mymodel import db_session
@@ -787,7 +787,7 @@ def op_search_from_key():
     cur.execute(sql)
     results = cur.fetchall()
     result_list = [(item[0], item[1], item[2], item[3], item[4],
-        url_for("render_pdf_opnote", op_id = item[0])) for item in results]
+        url_for("render_pdf_opnote", op_id = item[0]), url_for('display_op', op_id=item[0])) for item in results]
     return render_template("display_opsearch_result.html", sql=sql, result_list = result_list)
 
 @app.route('/receive_disease_id', methods=['GET', 'POST'])
@@ -871,8 +871,8 @@ def display_op(op_id):
         "end_time": op.end_time,
         "surgeons": op.surgeons,
         "assistants": op.assistants,
-        "indication": op.indication,
-        "op_note": op.op_note
+        "indication": convert_paragraph_text(op.indication),
+        "op_note": convert_paragraph_text(op.op_note)
     }
     form = OpDisplayForm(op_id=op.op_id, patient_id=patient.patient_id, op_date=op.op_date,
                          preop_dx=op.preop_dx, postop_dx=op.postop_dx, procedure=op.procedure,

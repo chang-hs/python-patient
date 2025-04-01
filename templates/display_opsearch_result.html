@@ -13,6 +13,7 @@
                 <td>patient name</td>
                 <td>procedure</td>
                 <td>pdf</td>
+                <td>show</td>
         </th>
         {% for item in result_list %}
         <tr>
@@ -23,6 +24,7 @@
                 <td>{{ item[3] }}</td>
                 <td>{{ item[4] }} </td>
                 <td><a href= "{{ item[5] }}">pdf</a> </td>
+                <td><a href="{{ item[6] }}">show</a></td>
         </tr>
         {% endfor %}
         </table>
