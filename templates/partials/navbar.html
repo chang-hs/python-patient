@@ -9,6 +9,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
+                    <a class="nav-link" href="{{ url_for('home') }}">Home</a>
                     <a class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Register
@@ -16,6 +17,7 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="{{ url_for('pt_register') }}">患者</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('get_patient_id') }}">手術</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('get_op_id') }}">手術病名</a></li>
                         </ul>
                     </a>
                     <a class="nav-item dropdown">

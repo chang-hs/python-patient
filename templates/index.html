@@ -9,7 +9,7 @@ title%} Patient Database {% endblock %} {% block page_content %}
   </div>
   <div class="row">
     <div class="col">
-      <a class="btn btn-primary" href="http://localhost:8003/register/patient"
+      <a class="btn btn-primary" href="{{ url_for('pt_register') }}"
         >患者登録</a
       >
     </div>
@@ -17,12 +17,12 @@ title%} Patient Database {% endblock %} {% block page_content %}
     <div class="col">
       <a
         class="btn btn-primary"
-        href="http://localhost:8003/search/patient_name"
+        href="{{ url_for('search_patient_name') }}"
         >患者名検索</a
       >
     </div>
     <div class="col">
-      <a class="btn btn-primary" href="http://localhost:8003/search_patient_id"
+      <a class="btn btn-primary" href="{{ url_for('search_patient_id') }}"
         >患者ID検索</a
       >
     </div>
@@ -30,17 +30,17 @@ title%} Patient Database {% endblock %} {% block page_content %}
 
   <div class="row mt-1">
     <div class="col-4">
-      <a href="http://localhost:8003/register/op" class="btn btn-success"
+      <a href="{{ url_for('get_patient_id') }}" class="btn btn-success"
         >手術登録</a
       >
     </div>
     <div class="col-4">
-      <a href="http://localhost:8003/register/op_diag" class="btn btn-success"
+      <a href="{{ url_for('op_id_register') }}" class="btn btn-success"
         >手術病名登録</a
       >
     </div>
     <div class="col-4">
-      <a href="http://localhost:8003/search/op" class="btn btn-success"
+      <a href="{{ url_for('search_op') }}" class="btn btn-success"
         >手術検索</a
       >
     </div>
