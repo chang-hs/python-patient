@@ -64,7 +64,7 @@ class Op(Base):
     patient: Mapped["Patient"] = relationship(back_populates="ops")
     diags = relationship("Diagnosis", secondary='op_diag', overlaps='ops')
     surgeon_list = relationship("Surgeon", secondary='op_surgeon')
-    assistant_list = relationship("Assistants", secondary='op_assistant')
+    assistant_list = relationship("Surgeon", secondary='op_assistant')
 
     def __repr__(self) -> str:
         return f"Op(id={self.op_id!r}, op_date={self.op_date!r}, procedure={self.procedure!r}"

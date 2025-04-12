@@ -51,6 +51,22 @@ class OpDisplayForm(FlaskForm):
     indication = TextAreaField('Indication', render_kw={"style": "height: 200px"})
     op_note = TextAreaField('Procedure', render_kw={"style": "height: 400px;"})
 
+class OpEditForm(FlaskForm):
+    op_id = IntegerField('Op ID')
+    patient_id = StringField('ID')
+    kanji_name = StringField('名前')
+    op_date = DateField('手術日')
+    preop_dx = StringField('術前診断')
+    postop_dx = StringField('術後診断')
+    procedure = StringField('術式')
+    start_time = DateTimeField('開始時間', format='%H:%M')
+    end_time = DateTimeField('終了時間', format='%H:%M')
+    surgeons = SelectMultipleField('術者', choices=get_surgeon_tuples())
+    assistants = SelectMultipleField('助手', choices=get_surgeon_tuples())
+    indication = TextAreaField('Indication', render_kw={"style": "height: 200px"})
+    op_note = TextAreaField('Procedure', render_kw={"style": "height: 400px;"})
+    submit = SubmitField('Submit')
+
 #手術検索画面用のform
 class OpSearchForm(FlaskForm):
     date_from = StringField('From')

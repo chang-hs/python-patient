@@ -20,7 +20,7 @@ import datetime
 import subprocess
 from myforms import PtRegisterForm, OpRegisterForm, IdForm, MajordivForm, PathodivForm, DiseaseNameForm
 from myforms import DiseaseNameWithNewForm, LocationForm, PatientIdForm, PatientNameForm, SearchKeyForm
-from myforms import LocationWithNewForm, OpSearchForm, OpIdForm, OpDisplayForm, LoginForm
+from myforms import LocationWithNewForm, OpSearchForm, OpIdForm, OpDisplayForm, LoginForm, OpEditForm
 from funcs import create_surgeon_string, convert_paragraph_text
 from mymodel import Patient, Op, Diagnosis, OpDiag, DiseaseName, MajorDiv, PathoDiv, Location, Phone, Surgeon
 from mymodel import OpSurgeon, User
@@ -635,10 +635,20 @@ def show_patient(patient_id):
     return render_template("display_patient.html", patient_dic = patient_dict,
             phone_list = phone_list, op_list=op_list)
 
-@app.route('/edit/<int:op_id>')
+@app.route('/edit_op/<int:op_id>')
 @login_required
 def edit_op(op_id):
-    form = OpDisplayForm()
+    myop = Op.query.get(op_id)
+    my_surgeon_list = Op.surgeon_list
+    my_assitant_list = Op.assistant_list
+    form = OpEditForm(op_id=op_id, patient_id=myop.patient.patient_id,
+                      op_date=myop.op_date, kanji_name=myop.patient.kanji_name,
+                      start_time=myop.start_time, end_time=myop.end_time,
+                      preop_dx=myop.preop_dx, postop_dx=myop.postop_dx,
+                      procedure=myop.procedure, indication=myop.indication,
+                      op_note=myop.op_note)
+    form.surgeons.data = [str(x.surgeon_id) for x in myop.surgeon_list]
+    form.assistants.data = [str(x.surgeon_id) for x in myop.assistant_list]
     if form.validate_on_submit():
         patient_id = form.patient_id.data
         op_date = form.op_date.data
@@ -652,7 +662,14 @@ def edit_op(op_id):
         surgeons = form.surgeons.data
         assistants = form.assistants.data
     else:
-        myop = Op.query.filter(Op.op_id == op_id).first()
+         mydict = {'op_id': op_id, 'patient_id': myop.patient.patient_id,
+                  'op_date': myop.op_date, 'kanji_name': myop.patient.kanji_name,
+                  'start_time': myop.start_time, "end_time": myop.end_time,
+                  'preop_dx': myop.preop_dx, 'postop_dx': myop.postop_dx,
+                  'procedure': myop.procedure, 'indication': myop.indication,
+                  'op_note': myop.op_note, 'surgeons': myop.surgeon_list,
+                  'assistants': myop.assistant_list}
+         return render_template("op_edit.html", form=form)
 
 
 @app.route('/render_pdf_opnote/<op_id>', methods=['Get', 'Post'])
