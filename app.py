@@ -635,6 +635,26 @@ def show_patient(patient_id):
     return render_template("display_patient.html", patient_dic = patient_dict,
             phone_list = phone_list, op_list=op_list)
 
+@app.route('/edit/<int:op_id>')
+@login_required
+def edit_op(op_id):
+    form = OpDisplayForm()
+    if form.validate_on_submit():
+        patient_id = form.patient_id.data
+        op_date = form.op_date.data
+        start_time = form.start_time.data
+        end_time = form.end_time.data
+        preop_dx = form.preop_dx.data
+        postop_dx = form.postop_dx.data
+        procedure = form.procedure.data
+        indication = form.indication.data
+        op_note = form.op_note.data
+        surgeons = form.surgeons.data
+        assistants = form.assistants.data
+    else:
+        myop = Op.query.filter(Op.op_id == op_id).first()
+
+
 @app.route('/render_pdf_opnote/<op_id>', methods=['Get', 'Post'])
 @login_required
 def render_pdf_opnote(op_id):
