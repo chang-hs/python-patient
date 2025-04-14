@@ -139,6 +139,13 @@ class OpSurgeon(Base):
         sa.UniqueConstraint('op_id', 'surgeon_id', name='op_surgeon_op_id_surgeon_id_key'),
     )
 
+    def __repr__(self):
+        return (
+            f'OpSurgeon(op_id: {self.op_id}, surgeon_id: {self.surgeon_id})'
+        )
+               
+
+
 class OpAssistant(Base):
     __tablename__ = 'op_assistant'
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -146,8 +153,14 @@ class OpAssistant(Base):
     surgeon_id: Mapped[int] = mapped_column(ForeignKey("surgeons.surgeon_id"))
 
     __table_args__ = (
-        sa.UniqueConstraint('op_id', 'surgeon_id', name='op_assistant_op_id_surgeon_id_key'),
+        sa.UniqueConstraint('op_id', 'surgeon_id',
+                            name='op_assistant_op_id_surgeon_id_key'),
     )
+
+    def __repr__(self):
+        return (
+            f'OpAssistant(op_id: {self.op_id}, surgeon_id: {self.surgeon_id})'
+        )
 
 class User(Base, UserMixin):
     __tablename__ = "users"

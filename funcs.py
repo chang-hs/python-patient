@@ -1,6 +1,7 @@
 import os, glob, psycopg2
 from flask import render_template
 import re
+from mymodel import Surgeon
 
 def get_surgeon_tuples():
     """Obtain data from the surgeons table
@@ -84,5 +85,9 @@ def convert_paragraph_text(text):
           body = body.strip()
           formatted += f'<p class="mb-1"><span class="mx-2"><strong>{head}</strong></span>{body}</p>'
     return formatted
+
+def surgeon_name_to_id(surgeon_name):
+    my_surgeon = Surgeon.query.filter(Surgeon.surgeon_name == surgeon_name.split()).first()
+    return my_surgeon.surgeon_id
 
 #print(file_exists(1860, "original"))

@@ -22,8 +22,9 @@ from myforms import PtRegisterForm, OpRegisterForm, IdForm, MajordivForm, Pathod
 from myforms import DiseaseNameWithNewForm, LocationForm, PatientIdForm, PatientNameForm, SearchKeyForm
 from myforms import LocationWithNewForm, OpSearchForm, OpIdForm, OpDisplayForm, LoginForm, OpEditForm
 from funcs import create_surgeon_string, convert_paragraph_text
+from funcs import surgeon_name_to_id, get_surgeon_tuples
 from mymodel import Patient, Op, Diagnosis, OpDiag, DiseaseName, MajorDiv, PathoDiv, Location, Phone, Surgeon
-from mymodel import OpSurgeon, User
+from mymodel import OpSurgeon, OpAssistant, User
 from mymodel import db_session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -35,7 +36,9 @@ import funcs
 
 app = Flask(__name__)
 bootstrap = Bootstrap5(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://chang:stmmc364936@localhost/patient_2'
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+        'postgresql+psycopg2://chang:stmmc364936@localhost/patient_2'
+)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'penfield'
 
@@ -635,32 +638,60 @@ def show_patient(patient_id):
     return render_template("display_patient.html", patient_dic = patient_dict,
             phone_list = phone_list, op_list=op_list)
 
-@app.route('/edit_op/<int:op_id>')
+@app.route('/edit_op/<int:op_id>', methods=['GET', 'POST'])
 @login_required
 def edit_op(op_id):
-    myop = Op.query.get(op_id)
+    myop = db_session.query(Op).get(op_id)
     my_surgeon_list = Op.surgeon_list
     my_assitant_list = Op.assistant_list
-    form = OpEditForm(op_id=op_id, patient_id=myop.patient.patient_id,
-                      op_date=myop.op_date, kanji_name=myop.patient.kanji_name,
-                      start_time=myop.start_time, end_time=myop.end_time,
-                      preop_dx=myop.preop_dx, postop_dx=myop.postop_dx,
-                      procedure=myop.procedure, indication=myop.indication,
-                      op_note=myop.op_note)
-    form.surgeons.data = [str(x.surgeon_id) for x in myop.surgeon_list]
-    form.assistants.data = [str(x.surgeon_id) for x in myop.assistant_list]
+    if request.method == 'POST':
+        form = OpEditForm()
+    else:
+        form = OpEditForm(op_id=op_id, patient_id=myop.patient.patient_id,
+                          op_date=myop.op_date, kanji_name=myop.patient.kanji_name,
+                          start_time=myop.start_time, end_time=myop.end_time,
+                          preop_dx=myop.preop_dx, postop_dx=myop.postop_dx,
+                          procedure=myop.procedure, indication=myop.indication,
+                          op_note=myop.op_note)
+        form.surgeons.choices = get_surgeon_tuples()
+        form.assistants.choices = get_surgeon_tuples()
+        form.surgeons.data = [str(x.surgeon_id) for x in myop.surgeon_list]
+        form.assistants.data = [str(x.surgeon_id) for x in myop.assistant_list]
+
     if form.validate_on_submit():
-        patient_id = form.patient_id.data
-        op_date = form.op_date.data
-        start_time = form.start_time.data
-        end_time = form.end_time.data
-        preop_dx = form.preop_dx.data
-        postop_dx = form.postop_dx.data
-        procedure = form.procedure.data
-        indication = form.indication.data
-        op_note = form.op_note.data
-        surgeons = form.surgeons.data
-        assistants = form.assistants.data
+        myop.patient_id = form.patient_id.data
+        myop.op_date = form.op_date.data
+        myop.start_time = form.start_time.data
+        myop.end_time = form.end_time.data
+        myop.preop_dx = form.preop_dx.data
+        myop.postop_dx = form.postop_dx.data
+        myop.procedure = form.procedure.data
+        myop.indication = form.indication.data
+        myop.op_note = form.op_note.data
+
+        surgeon_ids = [int(x) for x in form.surgeons.data]
+
+        assistant_ids = [int(x) for x in form.assistants.data]
+
+        # delete current OpSurgeon and OpAssistant data
+        for op_or_assist in [OpSurgeon, OpAssistant]:
+            for my_object in (
+                db_session.query(op_or_assist)
+                .filter(op_or_assist.op_id == op_id).all()
+            ):
+                db_session.delete(my_object)
+                db_session.commit()
+
+        # Add data to OpSurgeon and OpAssistant
+        for model, ids in [(OpSurgeon, surgeon_ids),
+                           (OpAssistant, assistant_ids)]:
+            for i in ids:
+                my_object = model(op_id=op_id, surgeon_id=i)
+                db_session.add(my_object)
+        db_session.commit()
+        return render_template('message.html',
+                               message='Op data successfully edited')
+        
     else:
          mydict = {'op_id': op_id, 'patient_id': myop.patient.patient_id,
                   'op_date': myop.op_date, 'kanji_name': myop.patient.kanji_name,
