@@ -1,0 +1,29 @@
+\documentclass[a4paper, 12pt]{{jarticle}}
+\usepackage{{newpxtext}}
+\usepackage[utf8]{{inputenc}}
+\pagestyle{{myheadings}}
+\setlength{{\topmargin}}{{-0.5cm}}
+\setlength{{\topskip}}{{-0.5cm}}
+\setlength{{\headheight}}{{0cm}}
+\setlength{{\footskip}}{{1cm}}
+\setlength{{\oddsidemargin}}{{0cm}}
+\setlength{{\evensidemargin}}{{0cm}}
+\setlength{{\textheight}}{{25cm}}
+\setlength{{\textwidth}}{{17cm}}
+\markright{{op-id: {op_id}}}
+\begin{{document}}
+\begin{{center}}
+\textbf{{\large Operation Record}}\\
+\end{{center}}
+\textbf{{Patient ID: }}{patient_id}\\
+\textbf{{Patient Name: }}{kanji_name}\\
+\textbf{{Operation Date: }}{op_date}\\
+\textbf{{Surgeons: }}{surgeons}\\
+\textbf{{Assistants: }}{assistants}\\
+\textbf{{Starting time: }}{start_time}\\
+{{\bfseries Finishing time: }}{end_time}\\
+{{\bfseries Preop Diagnosis: }}{preop_diag}\\\\
+{{\bfseries Procedure: }}{procedure}\\\\
+{{\bfseries Indication:}}{indication}\\\\
+{{\bfseries Procedure:}}{op_note}
+\end{{document}}
