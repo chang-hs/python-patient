@@ -874,9 +874,9 @@ def render_pdf_opnote(op_id):
         op_note=op[10],
     )
 
-    HOME = os.environ.get('HOME', '/home/chang')
-    PLATEX_PATH = os.environ.get('PLATEX_PATH', '/usr/bin/platex')
-    DVIPDFMX_PATH = os.environ.get('DVIPDFMX_PATH', 'usr/bin/dvipdfmx')
+    HOME = os.environ.get("HOME", "/home/chang")
+    PLATEX_PATH = os.environ.get("PLATEX_PATH", "/usr/bin/platex")
+    DVIPDFMX_PATH = os.environ.get("DVIPDFMX_PATH", "usr/bin/dvipdfmx")
 
     with open(HOME + "/tmp/opnote.tex", "wt") as texfile:
         texfile.write(pdf_text)
@@ -956,7 +956,7 @@ def search_disease_id_from_search_key():
             "dbname=patient_2 user=chang password=stmmc364936 host=localhost"
         )
         cur = conn.cursor()
-    except:
+    except psycopg2.Error:
         return render_template("message.html", message="Can't connect to database")
     sql = "SELECT d.disease_id, dn.disease_name, m.major_div, p.patho_div, l.location "
     sql += "FROM diagnosis d "
@@ -1032,7 +1032,7 @@ def op_search_from_key():
             "dbname=patient_2 user=chang password=stmmc364936 host=localhost"
         )
         cur = conn.cursor()
-    except:
+    except psycopg2.Error:
         return render_template("message.html", message="Database Opening Error")
     cur.execute(sql)
     results = cur.fetchall()
@@ -1056,7 +1056,9 @@ def op_search_from_key():
 @app.route("/receive_disease_id", methods=["GET", "POST"])
 @login_required
 def receive_disease_id():
-    "Receive the submission from display_disease_ids.html, renders op_id_list " "and redirect to op_id_list_from_disease_id_list"
+    """Receive the submission from display_disease_ids.html,
+    renders op_id_list and redirect to op_id_list_from_disease_id_list
+    """
     if request.method == "POST":
         disease_id_list = request.form.getlist("disease_id")
     session["disease_id_list"] = [int(item) for item in disease_id_list]
