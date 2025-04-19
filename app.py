@@ -857,7 +857,7 @@ def render_pdf_opnote(op_id):
             WHERE o.op_id = %s"
     cur.execute(sql, (op_id,))
     op = cur.fetchone()
-    with open("/srv/http/opnote_template.tex", "rt") as template_file:
+    with open("/home/ubuntu/opnote_template.tex", "rt") as template_file:
         opnote_template = template_file.read()
     pdf_text = opnote_template.format(
         op_id=op_id,
@@ -876,7 +876,7 @@ def render_pdf_opnote(op_id):
 
     HOME = os.environ.get("HOME", "/home/chang")
     PLATEX_PATH = os.environ.get("PLATEX_PATH", "/usr/bin/platex")
-    DVIPDFMX_PATH = os.environ.get("DVIPDFMX_PATH", "usr/bin/dvipdfmx")
+    DVIPDFMX_PATH = os.environ.get("DVIPDFMX_PATH", "/usr/bin/dvipdfmx")
 
     with open(HOME + "/tmp/opnote.tex", "wt") as texfile:
         texfile.write(pdf_text)

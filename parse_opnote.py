@@ -5,14 +5,14 @@ from db_funcs import insert_patient, insert_op
 import ast
 
 
-def wrap_time_stamp(content):
+def _wrap_time_stamp(content):
     result = re.sub(
         r"(?i)(start time|end time):\s*([0-9]{1,2}:[0-9]{2})", r'\1: "\2"', content
     )
     return result
 
 
-def wrap_id_stamp(content):
+def _wrap_id_stamp(content):
     result = re.sub(r"(?i)(id):\s*([0-9]{8})", r'\1: "\2"', content)
     return result
 
@@ -48,8 +48,8 @@ def parse_opnote(filename):
             elif in_opnote:
                 opnote_lines.append(line)
 
-    yaml_content = wrap_time_stamp("".join(yaml_lines))
-    yaml_content = wrap_id_stamp(yaml_content)
+    yaml_content = _wrap_time_stamp("".join(yaml_lines))
+    yaml_content = _wrap_id_stamp(yaml_content)
     data = yaml.safe_load(yaml_content)
     indication = "".join(indication_lines)
     opnote = "".join(opnote_lines)
