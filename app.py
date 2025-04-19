@@ -874,7 +874,7 @@ def render_pdf_opnote(op_id):
         op_note=op[10],
     )
 
-    HOME = os.environ.get("HOME", "/home/chang")
+    HOME = os.environ.get("HOME", "/home/ubuntu")
     PLATEX_PATH = os.environ.get("PLATEX_PATH", "/usr/bin/platex")
     DVIPDFMX_PATH = os.environ.get("DVIPDFMX_PATH", "/usr/bin/dvipdfmx")
 
