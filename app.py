@@ -891,7 +891,7 @@ def render_pdf_opnote(op_id):
     cur.close()
     conn.close()
     # return send_from_directory('/home/chang/tmp', 'opnote.pdf', as_attachment=True, attachment_filename='opnote-' + op_id + '.pdf')
-    return send_from_directory("/home/chang/tmp", "opnote.pdf", as_attachment=True)
+    return send_from_directory(HOME + "/tmp", "opnote.pdf", as_attachment=True)
 
 
 @app.route("/render_pdf_opnote_noid/<op_id>", methods=["GET", "POST"])
