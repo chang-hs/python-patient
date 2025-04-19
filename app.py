@@ -881,11 +881,11 @@ def render_pdf_opnote(op_id):
     with open(HOME + "/tmp/opnote.tex", "wt") as texfile:
         texfile.write(pdf_text)
     res = subprocess.call(
-        PLATEX_PATH + " -output-directory /home/chang/tmp /home/chang/tmp/opnote.tex",
+        PLATEX_PATH + " -output-directory" + HOME + "/tmp " + HOME + "/tmp/opnote.tex",
         shell=True,
     )
     res = subprocess.call(
-        DVIPDFMX_PATH + " -o /home/chang/tmp/opnote.pdf /home/chang/tmp/opnote",
+        DVIPDFMX_PATH + " -o " + HOME + "/tmp/opnote.pdf " + HOME + "/tmp/opnote",
         shell=True,
     )
     cur.close()
