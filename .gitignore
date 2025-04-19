@@ -4,3 +4,4 @@ venv6/
 .idea/
 __pycache__/
 *.py[cod]
+testfile
