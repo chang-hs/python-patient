@@ -789,6 +789,9 @@ def edit_op(op_id):
         myop.indication = form.indication.data
         myop.op_note = form.op_note.data
 
+        # Update the op data
+        db_session.commit()
+
         surgeon_ids = [int(x) for x in form.surgeons.data]
 
         assistant_ids = [int(x) for x in form.assistants.data]
