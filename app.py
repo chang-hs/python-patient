@@ -740,7 +740,7 @@ def show_patient(patient_id):
             o.op_date,
             o.procedure,
             url_for("render_pdf_opnote", op_id=o.op_id),
-            url_for("render_pdf_opnote_noid", op_id=o.op_id),
+            url_for("display_op", op_id=o.op_id),
         )
         for o in patient.ops
     ]

@@ -24,7 +24,7 @@
         <th>op_date</th>
         <th>Procedure</th>
         <th>pdf file</th>
-        <th>anonymous pdf</th>
+        <th>Display Op</th>
         <th>Edit</th>
         </tr>
 	{% for op in op_list %}
@@ -33,7 +33,7 @@
 		<td>{{ op[1] }}</td>
 		<td>{{ op[2] }}</td>
 		<td><a href='{{ op[3] }}'>pdf</a></td>
-                <td><a href='{{ op[4] }}'>anonymous</a></td>
+                <td><a href='{{ op[4] }}'>display</a></td>
         <td><a href="{{ url_for('edit_op', op_id=op[0]) }}">
                 Edit
             </a></td>
