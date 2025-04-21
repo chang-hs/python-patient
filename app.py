@@ -148,7 +148,7 @@ def op_register():
     sql = "SELECT kanji_name FROM patient WHERE patient_id = %s"
     try:
         conn = psycopg2.connect(
-            "dbname=patient_2" "user=chang password=stmmc364936" "host=localhost"
+            "dbname=patient_2 user=chang password=stmmc364936 host=localhost"
         )
         cur = conn.cursor()
     except psycopg2.Error:
@@ -888,7 +888,7 @@ def render_pdf_opnote(op_id):
         shell=True,
     )
     res = subprocess.call(
-        DVIPDFMX_PATH + " -o " + HOME + "/tmp/opnote.pdf " + HOME + "/tmp/opnote",
+        DVIPDFMX_PATH + " -o " + HOME + "/tmp/opnote.pdf " + HOME + "/tmp/opnote.dvi",
         shell=True,
     )
     cur.close()
