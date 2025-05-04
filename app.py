@@ -891,7 +891,7 @@ def render_pdf_opnote(op_id):
     with open(HOME + "/tmp/opnote.tex", "wt") as texfile:
         texfile.write(pdf_text)
     res = subprocess.call(
-        PLATEX_PATH + " -output-directory" + HOME + "/tmp " + HOME + "/tmp/opnote.tex",
+        PLATEX_PATH + " -output-directory " + HOME + "/tmp " + HOME + "/tmp/opnote.tex",
         shell=True,
     )
     res = subprocess.call(
