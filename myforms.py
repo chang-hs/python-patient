@@ -32,8 +32,8 @@ class OpRegisterForm(FlaskForm):
     end_time = DateTimeField('終了時間', format='%H:%M')
     surgeons = SelectMultipleField('術者', choices = get_surgeon_tuples())
     assistants = SelectMultipleField('助手', choices = get_surgeon_tuples())
-    indication = TextAreaField('Indication')
-    op_note = TextAreaField('Procedure')
+    indication = TextAreaField('Indication', render_kw={"style": "height: 400px"})
+    op_note = TextAreaField('Procedure', render_kw={"style": "height: 400px"})
     submit = SubmitField('Submit')
 
 class OpDisplayForm(FlaskForm):
