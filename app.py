@@ -17,7 +17,7 @@ from funcs import get_surgeon_tuples
 from mymodel import Patient, Op, Phone
 from mymodel import OpSurgeon, OpAssistant, User
 from mymodel import db_session
-from flask_login import LoginManager, login_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import SQLAlchemyError
 import os
@@ -73,6 +73,13 @@ def login():
             flash("Invalid username or password", "danger")
             return redirect(url_for("login"))
     return render_template("login.html", form=form)
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
 
 
 @app.route("/")
