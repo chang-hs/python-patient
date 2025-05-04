@@ -854,6 +854,10 @@ def edit_op(op_id):
 @app.route("/render_pdf_opnote/<op_id>", methods=["Get", "Post"])
 @login_required
 def render_pdf_opnote(op_id):
+    HOME = os.environ.get("HOME", "/home/ubuntu")
+    PATIENT_APP_HOME = os.environ.get("PATIENT_APP_HOME", "/home/ubuntu/python-patient")
+    PLATEX_PATH = os.environ.get("PLATEX_PATH", "/usr/bin/platex")
+    DVIPDFMX_PATH = os.environ.get("DVIPDFMX_PATH", "/usr/bin/dvipdfmx")
     try:
         conn = psycopg2.connect(
             "dbname=patient_2 user=chang password=stmmc364936 host=localhost"
@@ -867,7 +871,7 @@ def render_pdf_opnote(op_id):
             WHERE o.op_id = %s"
     cur.execute(sql, (op_id,))
     op = cur.fetchone()
-    with open("/home/ubuntu/opnote_template.tex", "rt") as template_file:
+    with open(PATIENT_APP_HOME + "/static/opnote_template.tex", "rt") as template_file:
         opnote_template = template_file.read()
     pdf_text = opnote_template.format(
         op_id=op_id,
@@ -883,10 +887,6 @@ def render_pdf_opnote(op_id):
         indication=op[9],
         op_note=op[10],
     )
-
-    HOME = os.environ.get("HOME", "/home/ubuntu")
-    PLATEX_PATH = os.environ.get("PLATEX_PATH", "/usr/bin/platex")
-    DVIPDFMX_PATH = os.environ.get("DVIPDFMX_PATH", "/usr/bin/dvipdfmx")
 
     with open(HOME + "/tmp/opnote.tex", "wt") as texfile:
         texfile.write(pdf_text)
