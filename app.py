@@ -904,8 +904,7 @@ def render_pdf_opnote(op_id):
     return send_from_directory(HOME + "/tmp",
                                "opnote.pdf",
                                as_attachment=True,
-                               attachment_file_name="opnote-" + op_id +
-                               ".pdf",
+                               attachment_file_name="opnote-" + op_id + ".pdf",
                                mimetype="application/pdf")
 
 
