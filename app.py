@@ -851,7 +851,7 @@ def edit_op(op_id):
         return render_template("op_edit.html", form=form)
 
 
-@app.route("/render_pdf_opnote/<op_id>", methods=["Get", "Post"])
+@app.route("/render_pdf_opnote/<op_id>", methods=["GET", "POST"])
 @login_required
 def render_pdf_opnote(op_id):
     HOME = os.environ.get("HOME", "/home/ubuntu")
@@ -949,7 +949,7 @@ def render_pdf_opnote_noid(op_id):
     cur.close()
     conn.close()
     return send_from_directory(
-        "/home/chang/tmp",
+        HOME + "/tmp",
         "opnote.pdf",
         as_attachment=True,
         attachment_filename="opnote-" + op_id + ".pdf",
