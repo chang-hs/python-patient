@@ -891,20 +891,20 @@ def render_pdf_opnote(op_id):
     with open(HOME + "/tmp/opnote.tex", "wt") as texfile:
         texfile.write(pdf_text)
     res = subprocess.call(
-        PLATEX_PATH + " -output-directory " + HOME + "/tmp " + HOME + "/tmp/opnote.tex",
+        f"{PLATEX_PATH} -output-directory {HOME}/tmp {HOME}/tmp/opnote.tex",
         shell=True,
     )
     res = subprocess.call(
-        DVIPDFMX_PATH + " -o " + HOME + "/tmp/opnote.pdf " + HOME + "/tmp/opnote.dvi",
+        f"{DVIPDFMX_PATH} -o {HOME}/tmp/opnote.pdf {HOME}/tmp/opnote.dvi",
         shell=True,
     )
     cur.close()
     conn.close()
     # return send_from_directory('/home/chang/tmp', 'opnote.pdf', as_attachment=True, attachment_filename='opnote-' + op_id + '.pdf')
-    return send_from_directory(HOME + "/tmp",
+    return send_from_directory(f"{HOME}/tmp",
                                "opnote.pdf",
                                as_attachment=True,
-                               attachment_file_name="opnote-" + op_id + ".pdf",
+                               download_name=f"opnote-{op_id}.pdf",
                                mimetype="application/pdf")
 
 
