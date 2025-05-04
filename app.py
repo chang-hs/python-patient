@@ -852,7 +852,7 @@ def edit_op(op_id):
 
 
 @app.route("/render_pdf_opnote/<op_id>", methods=["GET", "POST"])
-@login_required
+# @login_required
 def render_pdf_opnote(op_id):
     HOME = os.environ.get("HOME", "/home/ubuntu")
     PATIENT_APP_HOME = os.environ.get("PATIENT_APP_HOME", "/home/ubuntu/python-patient")
