@@ -851,13 +851,16 @@ def edit_op(op_id):
         return render_template("op_edit.html", form=form)
 
 
+# Incorporate environmental variables for pdf rendering
+HOME = os.environ.get("HOME", "/home/ubuntu")
+PATIENT_APP_HOME = os.environ.get("PATIENT_APP_HOME", "/home/ubuntu/python-patient")
+PLATEX_PATH = os.environ.get("PLATEX_PATH", "/usr/bin/platex")
+DVIPDFMX_PATH = os.environ.get("DVIPDFMX_PATH", "/usr/bin/dvipdfmx")
+
+
 @app.route("/render_pdf_opnote/<op_id>", methods=["GET", "POST"])
 @login_required
 def render_pdf_opnote(op_id):
-    HOME = os.environ.get("HOME", "/home/ubuntu")
-    PATIENT_APP_HOME = os.environ.get("PATIENT_APP_HOME", "/home/ubuntu/python-patient")
-    PLATEX_PATH = os.environ.get("PLATEX_PATH", "/usr/bin/platex")
-    DVIPDFMX_PATH = os.environ.get("DVIPDFMX_PATH", "/usr/bin/dvipdfmx")
     try:
         conn = psycopg2.connect(
             "dbname=patient_2 user=chang password=stmmc364936 host=localhost"
@@ -865,10 +868,13 @@ def render_pdf_opnote(op_id):
         cur = conn.cursor()
     except:
         return render_template("message.html", message="Database Opening Error")
-    sql = "SELECT p.patient_id, p.kanji_name, o.op_date, o.surgeons, o.assistants, o.start_time, \
-            o.end_time, o.preop_dx, o.procedure, o.indication, o.op_note \
-            FROM op o INNER JOIN patient p ON o.patient_id = p.patient_id \
-            WHERE o.op_id = %s"
+    sql = (
+        "SELECT p.patient_id, p.kanji_name, o.op_date, o.surgeons, "
+        "o.assistants, o.start_time, "
+        "o.end_time, o.preop_dx, o.procedure, o.indication, o.op_note "
+        "FROM op o INNER JOIN patient p ON o.patient_id = p.patient_id "
+        "WHERE o.op_id = %s"
+    )
     cur.execute(sql, (op_id,))
     op = cur.fetchone()
     with open(PATIENT_APP_HOME + "/static/opnote_template.tex", "rt") as template_file:
