@@ -33,7 +33,7 @@ class OpRegisterForm(FlaskForm):
     surgeons = SelectMultipleField('術者', choices = get_surgeon_tuples())
     assistants = SelectMultipleField('助手', choices = get_surgeon_tuples())
     indication = TextAreaField('Indication', render_kw={"style": "height: 400px"},
-                               default=("\\paragraph{Hitory}\n\\paragraph{Neurology}\n"
+                               default=("\\paragraph{History}\n\\paragraph{Neurology}\n"
                                 "\\paragraph{Radiology}\n\\paragraph{Decision}"))
     op_note = TextAreaField('Procedure', render_kw={"style": "height: 400px"})
     submit = SubmitField('Submit')
