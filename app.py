@@ -821,9 +821,10 @@ def edit_op(op_id):
             (OpAssistant, assist_ids_to_be_deleted, assist_ids_to_be_added),
         ]:
             for i in delete_ids:
-                db_session.query(model).filter(
+                surgeon = db_session.query(model).filter(
                     model.op_id == op_id, model.surgeon_id == i
-                ).first().delete()
+                ).first()
+                db_session.delete(surgeon)
                 db_session.commit()
             for i in add_ids:
                 my_obj = model(op_id=op_id, surgeon_id=i)
