@@ -890,8 +890,8 @@ def render_pdf_opnote(op_id):
         start_time=op[5],
         end_time=op[6],
         preop_diag=op[7],
-        procedure=op[8],
-        indication=op[9],
+        procedure=op[8].strip("\n"),
+        indication=op[9].strip("\n"),
         op_note=op[10],
     )
 
