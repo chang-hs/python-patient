@@ -186,7 +186,7 @@ def incorporate_opnote(start_date, end_date, my_dir):
         if existing_op:
             referred_op_id = existing_op.op_id
         else:
-            referred_op_id = entered_op_id.op_id
+            referred_op_id = entered_op_id
             
         for role in ["surgeon", "assistant"]:
             id_list = conv_namestring_to_numlist(result[role])
